@@ -1,0 +1,13 @@
+{
+  "name": "reharmonizer",
+  "version": "1.0.0",
+  "dependencies": {
+    "typescript": "^4.3.5",
+    "vexflow": "^3.0.9",
+    "npm": "^7.19.1"
+  },
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/vexflow": "^3.0.1"
+  }
+}
