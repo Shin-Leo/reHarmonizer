@@ -4,15 +4,25 @@ $(document).ready(function () {
     let div = document.getElementById("boo")
     let renderer = new VF.Renderer(div, VF.Renderer.Backends.SVG);
 
-    renderer.resize(500, 500);
+    renderer.resize(500, 200);
 
     let context = renderer.getContext();
-    let stave = new VF.Stave(10, 40, 400);
+    let staveWidth = 400
+    let stave = new VF.Stave(10, 40, staveWidth);
 
     stave.addClef("treble").addTimeSignature("4/4");
 
     stave.setContext(context).draw();
     let svg = document.querySelector("#boo > svg")
+    let rectWidth = 0
+    for (let i = 0; i < 16; i++) {
+            let rectangleHtml = `<rect x=\"${rectWidth + staveWidth * 0.2}\" y=\"20\" width=\"20\" height=\"100\" style=\"fill:rgb(183,241,222);\" opacity=\"0\" onmouseover=\"set_opacity(evt, 1);\" onmouseout=\"set_opacity(evt, 0);\">\n" +
+            "              <animate attributeName=\"opacity\" from=\"0\" to=\"1\" begin=\"mouseover\" dur=\"0.5s\" fill=\"freeze\"/>\n" +
+            "              <animate attributeName=\"opacity\" to=\"0\" begin=\"mouseout\" dur=\"0.5s\" fill=\"freeze\"/>\n" +
+            "            </rect>`
+        svg.insertAdjacentHTML('beforeend', rectangleHtml)
+        rectWidth += 20
+    }
     let pt = svg.createSVGPoint();
     svg.addEventListener("click", function (e) {
         getMousePosition(e, pt)
@@ -40,7 +50,7 @@ function drawNote() {
     let div = document.getElementById("boo")
     let renderer = new VF.Renderer(div, VF.Renderer.Backends.SVG);
 
-    renderer.resize(500, 500);
+    renderer.resize(500, 200);
 
     let context = renderer.getContext();
 

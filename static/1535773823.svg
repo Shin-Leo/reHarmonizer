@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="9.157238mm"
+   height="30.848988mm"
+   viewBox="0 0 32.446907 109.30744"
+   id="svg8101"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="Quarter Note-Crotchet-UP.svg">
+  <defs
+     id="defs8103" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="5.6568543"
+     inkscape:cx="75.697699"
+     inkscape:cy="56.815515"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-width="1920"
+     inkscape:window-height="1005"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata8106">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-103.77602,-80.941265)">
+    <path
+       inkscape:connector-curvature="0"
+       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.24164975;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 114.62603,190.24722 c 3.08345,0.0402 6.42199,-0.73449 9.57812,-2.22266 6.942,-3.27613 11.82613,-9.41389 12,-15.08008 l 0.0137,0 0,-91.251944 c 0,0 0.0763,-0.44172 -0.36246,-0.62758 -0.38564,-0.16337 -1.897,-0.16658 -2.23897,3.4e-4 -0.36348,0.17743 -0.31654,0.62723 -0.31654,0.62723 l 0,84.464834 c -3.90219,-3.36802 -10.9033,-3.54143 -17.50586,-0.43359 -8.65172,4.07873 -13.78232,12.37845 -11.45899,18.53711 1.38888,3.68039 5.23971,5.92044 10.29102,5.98633 z"
+       id="path8087"
+       sodipodi:nodetypes="cccccsscccccc" />
+  </g>
+</svg>
