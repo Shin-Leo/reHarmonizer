@@ -1,21 +1,49 @@
-import Vex from '/vexflow/releases/vexflow-debug'
+$(document).ready(function () {
+    VF = Vex.Flow;
 
-function setup() {
-    const vf = new Vex.Flow.Factory({
-        renderer: {elementId: 'boo', width: 500, height: 200}
+    var div = document.getElementById("boo")
+    var renderer = new VF.Renderer(div, VF.Renderer.Backends.SVG);
+
+    renderer.resize(500, 500);
+
+    var context = renderer.getContext();
+    var stave = new VF.Stave(10, 40, 400);
+
+    stave.addClef("treble").addTimeSignature("4/4");
+
+    stave.setContext(context).draw();
+    let svg = document.querySelector("#boo > svg")
+    let pt = svg.createSVGPoint();
+    svg.addEventListener("click", function (e) {
+        getMousePosition(e, pt)
     })
+})
+function addQuarterNote() {
 
-    const score = vf.EasyScore();
-    const system = vf.System();
-
-    system.addStave({
-        voices: [
-            score.voice(score.notes('C#5/q, B4, A4, G#4', {stem: 'up'})),
-            score.voice(score.notes('C#4/h, C#4', {stem: 'down'}))
-        ]
-    }).addClef('treble').addTimeSignature('4/4');
-
-    vf.draw();
 }
 
-setup()
+function getMousePosition(evt, pt) {
+    let cursorpt = cursorPoint(evt, pt);
+    console.log("(" + cursorpt.x + ", " + cursorpt.y + ")");
+}
+
+function cursorPoint(evt, pt) {
+    pt.x = evt.clientX;
+    pt.y = evt.clientY;
+    return pt
+}
+
+function drawNote() {
+    let notes = [
+        new VF.StaveNote({clef: "treble", keys: ["c/4"], duration: "q"}),
+    ]
+
+    var voice = new VF.Voice({num_beats: 4, beat_value: 4});
+    voice.addTickables(notes);
+
+    var formatter = new VF.Formatter().joinVoices([voice]).format([voice], 400);
+
+    voice.draw(context, stave);
+        let div = document.getElementById("boo")
+}
+
