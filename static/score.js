@@ -104,9 +104,14 @@ $(document).ready(function () {
         drawNote(projectionX, projectionY, xRectangles, context, stave)
         getMousePosition(e, pt)
     })
-    let quarterNote = document.querySelector("#quarter-note")
-    quarterNote.addEventListener("click", function (e) {
-        drawNote(e)
+    let noteButtons = document.querySelector("#note-buttons").childNodes
+
+    noteButtons.forEach((button) => {
+        if (button.nodeName === "BUTTON") {
+            button.addEventListener("click", () => {
+                document.querySelector("#subdivision").setAttribute("value", button.outerText)
+            })
+        }
     })
 })
 
@@ -128,20 +133,47 @@ function cursorPoint(evt, pt) {
 }
 
 function drawNote(pX, pY, rects, context, stave) {
+    let subdivision = document.querySelector("#subdivision").getAttribute("value")
+    let fillCount = document.querySelector("#fill-count")
+    let drawnNotes = document.querySelector('#drawn-notes')
+    let drawnNotesValue = document.querySelector("#drawn-notes").getAttribute("value")
+    let fillCountValue = parseInt(fillCount.getAttribute("value"))
     let note = ""
+    if (subdivision === "Quarter Note") {
+        console.log(subdivision[0])
+        note = subdivision[0]
+        fillCount.setAttribute("value", String(fillCountValue+ 1))
+    } else if (subdivision === "Half Note") {
+        note = subdivision[0]
+        fillCount.setAttribute("value", String(fillCountValue+ 2))
+    } else if (subdivision === "Eighth Note") {
+        note = subdivision[0]
+        fillCount.setAttribute("value", String(fillCountValue+ 0.5))
+    } else if (subdivision === "Whole Note") {
+        note = subdivision[0]
+        fillCount.setAttribute("value", String(fillCountValue+ 4))
+    } else if (subdivision === "Sixteenth Note") {
+        note = subdivision[0]
+        fillCount.setAttribute("value",String(fillCountValue+ 0.25))
+    }
     let temp = parseInt(pY)
     rects.forEach((rect) => {
         if (temp < parseInt(rect.attributes[2].value)) {
-            note = rect.attributes[0].value
+            note += ":" + String(rect.attributes[0].value) + ","
+            console.log(note)
             temp = Number.MAX_SAFE_INTEGER
         }
     })
-    let notes = [
-        new VF.StaveNote({clef: "treble", keys: [note], duration: "q"}),
-        new VF.StaveNote({clef: "treble", keys: ["b/4"], duration: "qr"}),
-        new VF.StaveNote({clef: "treble", keys: ["b/4"], duration: "qr"}),
-        new VF.StaveNote({clef: "treble", keys: ["b/4"], duration: "qr"}),
-    ];
+    drawnNotesValue = drawnNotesValue + note
+
+    drawnNotes.setAttribute("value", drawnNotesValue)
+
+
+    let notes = [];
+    while (fillCountValue !== 0) {
+        notes.push(new VF.StaveNote({clef: "treble", keys: ["b/4"], duration: "qr"}))
+    }
+
     let voice = new VF.Voice({num_beats: 4, beat_value: 4});
     voice.addTickables(notes);
     let deleteCount = parseInt(document.querySelector("#delete-count").attributes[1].value)
