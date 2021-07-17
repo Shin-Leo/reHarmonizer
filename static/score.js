@@ -11,7 +11,7 @@ function projectNote(rect, coordinates, availableWidth) {
         xPos = start + (inc * 2) * (3 / 4)
         document.getElementById("note-projection").setAttribute("cx", String(xPos))
         document.getElementById("note-projection").setAttribute("cy", String(rect[2].value - 2.5))
-                document.getElementById("delete-count").setAttribute("value", "2")
+        document.getElementById("delete-count").setAttribute("value", "2")
     } else if (coordinates.x > start + inc * 2 && coordinates.x <= start + inc * 3) {
         xPos = start + ((inc * 3) * (5 / 6))
         document.getElementById("note-projection").setAttribute("cx", String(xPos))
@@ -24,7 +24,7 @@ function projectNote(rect, coordinates, availableWidth) {
         document.getElementById("delete-count").setAttribute("value", "0")
     }
 }
-
+document.querySelector("#boo > svg")
 $(document).ready(function () {
     VF = Vex.Flow;
     let div = document.getElementById("boo")
@@ -88,7 +88,8 @@ $(document).ready(function () {
             inc--;
         }
     }
-    svg.insertAdjacentHTML('beforeend', `<ellipse id="note-projection" cx=\"400\" cy=\"400\" rx=\"5\" ry=\"4\" opacity=\"1\">`)
+    svg.insertAdjacentHTML('beforeend', '<g id="note-group"></g>')
+    svg.insertAdjacentHTML('beforeend', `<ellipse id="note-projection" cx=\"400\" cy=\"400\" rx=\"5\" ry=\"4\" opacity=\"1\"/>`)
     let pt = svg.createSVGPoint();
     xRectangles.forEach((rect) => {
         rect.addEventListener("mousemove", function (e) {
@@ -101,9 +102,10 @@ $(document).ready(function () {
     svg.addEventListener("click", function (e) {
         let projectionX = document.querySelector("#note-projection").attributes[1].value
         let projectionY = document.querySelector("#note-projection").attributes[2].value
-        drawNote(projectionX, projectionY, xRectangles, context, stave)
+        drawNote(projectionX, projectionY, xRectangles, context, stave, svg)
         getMousePosition(e, pt)
     })
+
     let noteButtons = document.querySelector("#note-buttons").childNodes
 
     noteButtons.forEach((button) => {
@@ -132,60 +134,147 @@ function cursorPoint(evt, pt) {
     return pt
 }
 
-function drawNote(pX, pY, rects, context, stave) {
+function evalNoteLength(noteLength) {
+    let context = {}
+    if (noteLength === "Q") {
+        context["dec"] = 1
+        context["duration"] = "q"
+    } else if (noteLength === "H") {
+        context["dec"] = 2
+        context["duration"] = "h"
+    } else if (noteLength === "E") {
+        context["dec"] = 0.5
+        context["duration"] = "8"
+    } else if (noteLength === "W") {
+        context["dec"] = 4
+        context["duration"] = "w"
+    } else if (noteLength === "S") {
+        context["dec"] = 0.25
+        context["duration"] = "16"
+    }
+    return context
+}
+
+function evalFillLength(remainder) {
+    let context = {}
+    if (remainder % 0.25 === 0) {
+        context["dec"] = 0.25
+        context["duration"] = "16"
+    } else if (remainder % 0.5 === 0) {
+        context["dec"] = 0.5
+        context["duration"] = "8"
+    } else if (remainder % 1 === 0) {
+        context["dec"] = 1
+        context["duration"] = "q"
+    } else if (remainder % 1 === 0) {
+        context["dec"] = 2
+        context["duration"] = "h"
+    } else if (remainder % 4 === 0) {
+        context["dec"] = 4
+        context["duration"] = "w"
+    }
+    return context
+}
+
+function drawNote(pX, pY, rects, context, stave, svg) {
     let subdivision = document.querySelector("#subdivision").getAttribute("value")
     let fillCount = document.querySelector("#fill-count")
     let drawnNotes = document.querySelector('#drawn-notes')
     let drawnNotesValue = document.querySelector("#drawn-notes").getAttribute("value")
-    let fillCountValue = parseInt(fillCount.getAttribute("value"))
+    let fillCountValue = parseInt(fillCount.attributes[1].value)
     let note = ""
     if (subdivision === "Quarter Note") {
-        console.log(subdivision[0])
         note = subdivision[0]
-        fillCount.setAttribute("value", String(fillCountValue+ 1))
+        fillCount.setAttribute("value", String(fillCountValue + 1))
     } else if (subdivision === "Half Note") {
         note = subdivision[0]
-        fillCount.setAttribute("value", String(fillCountValue+ 2))
+        fillCount.setAttribute("value", String(fillCountValue + 2))
     } else if (subdivision === "Eighth Note") {
         note = subdivision[0]
-        fillCount.setAttribute("value", String(fillCountValue+ 0.5))
+        fillCount.setAttribute("value", String(fillCountValue + 0.5))
     } else if (subdivision === "Whole Note") {
         note = subdivision[0]
-        fillCount.setAttribute("value", String(fillCountValue+ 4))
+        fillCount.setAttribute("value", String(fillCountValue + 4))
     } else if (subdivision === "Sixteenth Note") {
         note = subdivision[0]
-        fillCount.setAttribute("value",String(fillCountValue+ 0.25))
+        fillCount.setAttribute("value", String(fillCountValue + 0.25))
     }
+    fillCountValue = parseInt(fillCount.attributes[1].value)
     let temp = parseInt(pY)
     rects.forEach((rect) => {
         if (temp < parseInt(rect.attributes[2].value)) {
-            note += ":" + String(rect.attributes[0].value) + ","
-            console.log(note)
+            note += ":" + String(rect.attributes[0].value)
             temp = Number.MAX_SAFE_INTEGER
         }
     })
-    drawnNotesValue = drawnNotesValue + note
+    document.querySelector('#note-group').insertAdjacentHTML('beforeend', `<ellipse id=\"${fillCountValue + note}\" cx=\"0\" cy=\"0\" rx=\"5\" ry=\"4\" opacity=\"1\"/>`)
+    let drawnNote = document.getElementById(fillCountValue + note)
+    drawnNote.setAttribute("cx", pX)
+    drawnNote.setAttribute("cy", pY)
+    drawnNotesValue = drawnNotesValue + note + ","
 
     drawnNotes.setAttribute("value", drawnNotesValue)
 
+    let drawnNoteAndLengthList = drawnNotesValue.split(",")
+    drawnNoteAndLengthList.pop()
+    let drawnNoteLengthValues = []
+    let drawnNoteKeyValues = []
+    drawnNoteAndLengthList.forEach((note) => {
+        let timeValue = note.split(":")[0]
+        let noteKey = note.split(":")[1]
+        drawnNoteLengthValues.push(timeValue)
+        drawnNoteKeyValues.push(noteKey)
+    })
 
     let notes = [];
-    while (fillCountValue !== 0) {
-        notes.push(new VF.StaveNote({clef: "treble", keys: ["b/4"], duration: "qr"}))
+    let dec = 0;
+    let index = 0;
+    let duration = ""
+    let fillCapacity = 4
+    let deleteCount = 0
+    let remainingToFill = fillCapacity - fillCountValue
+    if (fillCountValue >= fillCapacity) {
+        while (fillCountValue > 0 && drawnNoteLengthValues.length > 0 && drawnNoteKeyValues.length > 0) {
+            note = drawnNoteKeyValues[index]
+            let context = evalNoteLength(drawnNoteLengthValues[index])
+            dec = context["dec"]
+            duration = context["duration"]
+            let newNote = new VF.StaveNote({clef: "treble", keys: [note], duration: duration})
+            notes.push(newNote)
+            fillCountValue -= dec
+            index++
+        }
+        let voice = new VF.Voice({num_beats: 4, beat_value: 4});
+        voice.addTickables(notes);
+
+        let formatter = new VF.Formatter().joinVoices([voice]).format([voice], 400);
+        let svgChildNodes = svg.childNodes
+        let staticLength = svgChildNodes.length
+        for (let i = 0; i < staticLength; i++) {
+            let element = svgChildNodes[i]
+            if (element !== null && element.nodeName === "g" && element.attributes !== null && element.attributes[0].value !== "note-projection") {
+                element.remove()
+                break
+            }
+        }
+        voice.draw(context, stave);
     }
 
-    let voice = new VF.Voice({num_beats: 4, beat_value: 4});
-    voice.addTickables(notes);
-    let deleteCount = parseInt(document.querySelector("#delete-count").attributes[1].value)
-    console.log(deleteCount)
-    while(deleteCount !== 0) {
-        notes[deleteCount].setStyle({fillStyle: "transparent", strokeStyle: "transparent"})
-        deleteCount--;
+    /*
+    while (remainingToFill !== 0) {
+        let context = evalFillLength(remainingToFill)
+        dec = context["dec"]
+        duration = context["duration"]
+        remainingToFill -= dec
+        let newNote = new VF.StaveNote({clef: "treble", keys: [note], duration: duration})
+        notes.push(newNote)
+        deleteCount++
     }
-    let formatter = new VF.Formatter().joinVoices([voice]).format([voice], 400);
-    voice.draw(context, stave);
 
-    let svg = document.querySelector("#boo").childNodes[0].childNodes
-
+            while (deleteCount !== 0) {
+            notes[deleteCount].setStyle({fillStyle: "transparent", strokeStyle: "transparent"})
+            deleteCount--;
+        }
+    */
 }
 
