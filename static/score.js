@@ -1,5 +1,5 @@
 function projectNote(rect, coordinates, availableWidth) {
-    let start = parseInt(rect[1].value)
+    let start = parseInt(rect[1].value) - 20
     let inc = parseInt(availableWidth) / 4
     let xPos = 0
     if (coordinates.x >= start && coordinates.x <= start + inc) {
@@ -181,7 +181,7 @@ function drawNote(pX, pY, rects, context, stave, svg) {
     let fillCount = document.querySelector("#fill-count")
     let drawnNotes = document.querySelector('#drawn-notes')
     let drawnNotesValue = document.querySelector("#drawn-notes").getAttribute("value")
-    let fillCountValue = parseInt(fillCount.attributes[1].value)
+    let fillCountValue = parseFloat(fillCount.attributes[1].value)
     let note = ""
     if (subdivision === "Quarter Note") {
         note = subdivision[0]
