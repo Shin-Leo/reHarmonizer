@@ -1,26 +1,89 @@
 function projectNote(rect, coordinates, availableWidth) {
     let start = parseInt(rect[1].value) - 20
+    let subdivision = document.querySelector('#subdivision').attributes.getNamedItem('value').value
+    let projected_note = document.getElementById("note-projection")
     let inc = parseInt(availableWidth) / 4
+    if (subdivision === "Eighth Note") {
+        inc = parseInt(availableWidth) / 8
+    } else if (subdivision === "Sixteenth Note") {
+        inc = parseInt(availableWidth) / 16
+    }
     let xPos = 0
+    let yPos = rect[2].value - 2.5
     if (coordinates.x >= start && coordinates.x <= start + inc) {
         xPos = start + (inc / 2)
-        document.getElementById("note-projection").setAttribute("cx", String(xPos))
-        document.getElementById("note-projection").setAttribute("cy", String(rect[2].value - 2.5))
+        projected_note.setAttribute("cx", String(xPos))
+        projected_note.setAttribute("cy", String(yPos))
         document.getElementById("delete-count").setAttribute("value", "3")
     } else if (coordinates.x > start + inc && coordinates.x <= start + inc * 2) {
         xPos = start + (inc * 2) * (3 / 4)
-        document.getElementById("note-projection").setAttribute("cx", String(xPos))
-        document.getElementById("note-projection").setAttribute("cy", String(rect[2].value - 2.5))
+        projected_note.setAttribute("cx", String(xPos))
+        projected_note.setAttribute("cy", String(yPos))
         document.getElementById("delete-count").setAttribute("value", "2")
     } else if (coordinates.x > start + inc * 2 && coordinates.x <= start + inc * 3) {
         xPos = start + ((inc * 3) * (5 / 6))
-        document.getElementById("note-projection").setAttribute("cx", String(xPos))
-        document.getElementById("note-projection").setAttribute("cy", String(rect[2].value - 2.5))
+        projected_note.setAttribute("cx", String(xPos))
+        projected_note.setAttribute("cy", String(yPos))
         document.getElementById("delete-count").setAttribute("value", "1")
     } else if (coordinates.x > start + inc * 3 && coordinates.x <= start + inc * 4) {
         xPos = start + (inc * 4) * (7 / 8)
-        document.getElementById("note-projection").setAttribute("cx", String(xPos))
-        document.getElementById("note-projection").setAttribute("cy", String(rect[2].value - 2.5))
+        projected_note.setAttribute("cx", String(xPos))
+        projected_note.setAttribute("cy", String(yPos))
+        document.getElementById("delete-count").setAttribute("value", "0")
+    } else if (coordinates.x > start + inc * 4 && coordinates.x <= start + inc * 5) {
+        xPos = start + (inc * 5) * (9 / 10)
+        projected_note.setAttribute("cx", String(xPos))
+        projected_note.setAttribute("cy", String(yPos))
+        document.getElementById("delete-count").setAttribute("value", "2")
+    } else if (coordinates.x > start + inc * 5 && coordinates.x <= start + inc * 6) {
+        xPos = start + ((inc * 6) * (11 / 12))
+        projected_note.setAttribute("cx", String(xPos))
+        projected_note.setAttribute("cy", String(yPos))
+        document.getElementById("delete-count").setAttribute("value", "1")
+    } else if (coordinates.x > start + inc * 6 && coordinates.x <= start + inc * 7) {
+        xPos = start + (inc * 7) * (13 / 14)
+        projected_note.setAttribute("cx", String(xPos))
+        projected_note.setAttribute("cy", String(yPos))
+        document.getElementById("delete-count").setAttribute("value", "0")
+    } else if (coordinates.x > start + inc * 7 && coordinates.x <= start + inc * 8) {
+        xPos = start + (inc * 8) * (14 / 15)
+        projected_note.setAttribute("cx", String(xPos))
+        projected_note.setAttribute("cy", String(yPos))
+        document.getElementById("delete-count").setAttribute("value", "0")
+    } else if (coordinates.x > start + inc * 8 && coordinates.x <= start + inc * 9) {
+        xPos = start + (inc * 9) * (16 / 17)
+        projected_note.setAttribute("cx", String(xPos))
+        projected_note.setAttribute("cy", String(yPos))
+        document.getElementById("delete-count").setAttribute("value", "0")
+    } else if (coordinates.x > start + inc * 9 && coordinates.x <= start + inc * 10) {
+        xPos = start + (inc * 10) * (18 / 19)
+        projected_note.setAttribute("cx", String(xPos))
+        projected_note.setAttribute("cy", String(yPos))
+        document.getElementById("delete-count").setAttribute("value", "0")
+    } else if (coordinates.x > start + inc * 10 && coordinates.x <= start + inc * 11) {
+        xPos = start + (inc * 11) * (20 / 21)
+        projected_note.setAttribute("cx", String(xPos))
+        projected_note.setAttribute("cy", String(yPos))
+        document.getElementById("delete-count").setAttribute("value", "2")
+    } else if (coordinates.x > start + inc * 11 && coordinates.x <= start + inc * 12) {
+        xPos = start + (inc * 12) * (22 / 23)
+        projected_note.setAttribute("cx", String(xPos))
+        projected_note.setAttribute("cy", String(yPos))
+        document.getElementById("delete-count").setAttribute("value", "1")
+    } else if (coordinates.x > start + inc * 12 && coordinates.x <= start + inc * 13) {
+        xPos = start + (inc * 13) * (24 / 25)
+        projected_note.setAttribute("cx", String(xPos))
+        projected_note.setAttribute("cy", String(yPos))
+        document.getElementById("delete-count").setAttribute("value", "0")
+    } else if (coordinates.x > start + inc * 13 && coordinates.x <= start + inc * 14) {
+        xPos = start + (inc * 14) * (26 / 27)
+        projected_note.setAttribute("cx", String(xPos))
+        projected_note.setAttribute("cy", String(yPos))
+        document.getElementById("delete-count").setAttribute("value", "0")
+    } else if (coordinates.x > start + inc * 14 && coordinates.x <= start + inc * 15) {
+        xPos = start + (inc * 15) * (28 / 29)
+        projected_note.setAttribute("cx", String(xPos))
+        projected_note.setAttribute("cy", String(yPos))
         document.getElementById("delete-count").setAttribute("value", "0")
     }
 }
@@ -35,7 +98,7 @@ $(document).ready(function () {
     renderer.resize(rendererWidth, rendererHeight);
 
     let context = renderer.getContext();
-    let staveX = 400
+    let staveX = 440
     let staveY = 50
     let stave = new VF.Stave(10, staveY, staveX);
 
@@ -93,10 +156,16 @@ $(document).ready(function () {
     let pt = svg.createSVGPoint();
     xRectangles.forEach((rect) => {
         rect.addEventListener("mousemove", function (e) {
+            document.querySelector("#note-projection").attributes[5].value = "1"
             projectNote(e.target.attributes, getMousePosition(e, pt), staveX - e.target.attributes[1].value)
+
         })
         rect.addEventListener("mouseleave", function (e) {
+            document.querySelector("#note-projection").attributes[5].value = "1"
             projectNote(e.target.attributes, getMousePosition(e, pt), staveX - e.target.attributes[1].value)
+        })
+        svg.addEventListener("mouseleave", function (e) {
+            document.querySelector("#note-projection").attributes[5].value = "0"
         })
     });
     svg.addEventListener("click", function (e) {
@@ -106,12 +175,13 @@ $(document).ready(function () {
         getMousePosition(e, pt)
     })
 
-    let noteButtons = document.querySelector("#note-buttons").childNodes
+    let noteButtons = [...document.querySelector("#note-buttons").children]
 
     noteButtons.forEach((button) => {
         if (button.nodeName === "BUTTON") {
             button.addEventListener("click", () => {
-                document.querySelector("#subdivision").setAttribute("value", button.outerText)
+                let value = button.attributes[1].value
+                document.querySelector("#subdivision").setAttribute("value", value)
             })
         }
     })

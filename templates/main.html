@@ -6,6 +6,17 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="{{ url_for('static', filename='/vexflow-min.js') }}"></script>
     <script src="{{ url_for('static', filename='/score.js') }}"></script>
+    <style>
+
+        .btn-group button {
+            height: 30px;
+            width: 40px;
+            cursor: pointer;
+            margin-top: 10px;
+            margin-right: 10px;
+            float: left;
+        }
+    </style>
 </head>
 <body>
 <div id="boo"></div>
@@ -21,13 +32,23 @@
 <div>
     <span>selected subdivision<input type="text" value="Quarter Note" id="subdivision"></span>
 </div>
-<div id="note-buttons">
-    <button id="quarter-note" >Quarter Note</button>
-    <button id="half-note" >Half Note</button>
-    <button id="eighth-note" >Eighth Note</button>
-    <button id="sixteenth-note" >Sixteenth Note</button>
-    <button id="whole-note" >Whole Note</button>
-    <button id="render-Chart" >Render</button>
+
+<div class="btn-group" id="note-buttons">
+    <button class="note-button" id="Whole Note"><img
+            src="{{ url_for('static', filename='/note-pics/whole-note.svg') }}"
+            width="10" height="7" alt=""></button>
+    <button class="note-button" id="Half Note"><img
+            src="{{ url_for('static', filename='/note-pics/half-note.svg') }}"
+            width="20" height="20"></button>
+    <button class="note-button" id="Quarter Note"><img
+            src="{{ url_for('static', filename='/note-pics/quarter-note.svg') }}"
+            width="7" height="20"></button>
+    <button class="note-button" id="Eighth Note"><img
+            src="{{ url_for('static', filename='/note-pics/eighth-note.svg') }}"
+            width="20" height="20"></button>
+    <button class="note-button" id="Sixteenth Note"><img
+            src="{{ url_for('static', filename='/note-pics/sixteenth-note.svg') }}"
+            width="11" height="22"></button>
 </div>
 </body>
 </body>
