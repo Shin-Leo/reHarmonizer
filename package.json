@@ -2,9 +2,10 @@
   "name": "reharmonizer",
   "version": "1.0.0",
   "dependencies": {
+    "bulma": "^0.9.3",
+    "npm": "^7.19.1",
     "typescript": "^4.3.5",
-    "vexflow": "^3.0.9",
-    "npm": "^7.19.1"
+    "vexflow": "^3.0.9"
   },
   "type": "commonjs",
   "devDependencies": {

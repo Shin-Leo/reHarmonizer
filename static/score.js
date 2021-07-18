@@ -1,5 +1,6 @@
 function projectNote(rect, coordinates, availableWidth) {
-    let start = parseInt(rect[1].value) - 20
+    let divOffset = document.querySelector("#center-col").offsetLeft
+    let start = parseInt(rect[1].value) + divOffset + 3
     let subdivision = document.querySelector('#subdivision').attributes.getNamedItem('value').value
     let projected_note = document.getElementById("note-projection")
     let inc = parseInt(availableWidth) / 4
@@ -11,77 +12,78 @@ function projectNote(rect, coordinates, availableWidth) {
     let xPos = 0
     let yPos = rect[2].value - 2.5
     if (coordinates.x >= start && coordinates.x <= start + inc) {
-        xPos = start + (inc / 2)
+        xPos = start + (inc / 2) - divOffset
         projected_note.setAttribute("cx", String(xPos))
+        console.log(projected_note.getAttribute("cx"))
         projected_note.setAttribute("cy", String(yPos))
         document.getElementById("delete-count").setAttribute("value", "3")
     } else if (coordinates.x > start + inc && coordinates.x <= start + inc * 2) {
-        xPos = start + (inc * 2) * (3 / 4)
+        xPos = start + (inc * 2) * (3 / 4)- divOffset
         projected_note.setAttribute("cx", String(xPos))
         projected_note.setAttribute("cy", String(yPos))
         document.getElementById("delete-count").setAttribute("value", "2")
     } else if (coordinates.x > start + inc * 2 && coordinates.x <= start + inc * 3) {
-        xPos = start + ((inc * 3) * (5 / 6))
+        xPos = start + ((inc * 3) * (5 / 6))- divOffset
         projected_note.setAttribute("cx", String(xPos))
         projected_note.setAttribute("cy", String(yPos))
         document.getElementById("delete-count").setAttribute("value", "1")
     } else if (coordinates.x > start + inc * 3 && coordinates.x <= start + inc * 4) {
-        xPos = start + (inc * 4) * (7 / 8)
+        xPos = start + (inc * 4) * (7 / 8)- divOffset
         projected_note.setAttribute("cx", String(xPos))
         projected_note.setAttribute("cy", String(yPos))
         document.getElementById("delete-count").setAttribute("value", "0")
     } else if (coordinates.x > start + inc * 4 && coordinates.x <= start + inc * 5) {
-        xPos = start + (inc * 5) * (9 / 10)
+        xPos = start + (inc * 5) * (9 / 10)- divOffset
         projected_note.setAttribute("cx", String(xPos))
         projected_note.setAttribute("cy", String(yPos))
         document.getElementById("delete-count").setAttribute("value", "2")
     } else if (coordinates.x > start + inc * 5 && coordinates.x <= start + inc * 6) {
-        xPos = start + ((inc * 6) * (11 / 12))
+        xPos = start + ((inc * 6) * (11 / 12))- divOffset
         projected_note.setAttribute("cx", String(xPos))
         projected_note.setAttribute("cy", String(yPos))
         document.getElementById("delete-count").setAttribute("value", "1")
     } else if (coordinates.x > start + inc * 6 && coordinates.x <= start + inc * 7) {
-        xPos = start + (inc * 7) * (13 / 14)
+        xPos = start + (inc * 7) * (13 / 14)- divOffset
         projected_note.setAttribute("cx", String(xPos))
         projected_note.setAttribute("cy", String(yPos))
         document.getElementById("delete-count").setAttribute("value", "0")
     } else if (coordinates.x > start + inc * 7 && coordinates.x <= start + inc * 8) {
-        xPos = start + (inc * 8) * (14 / 15)
+        xPos = start + (inc * 8) * (14 / 15)- divOffset
         projected_note.setAttribute("cx", String(xPos))
         projected_note.setAttribute("cy", String(yPos))
         document.getElementById("delete-count").setAttribute("value", "0")
     } else if (coordinates.x > start + inc * 8 && coordinates.x <= start + inc * 9) {
-        xPos = start + (inc * 9) * (16 / 17)
+        xPos = start + (inc * 9) * (16 / 17)- divOffset
         projected_note.setAttribute("cx", String(xPos))
         projected_note.setAttribute("cy", String(yPos))
         document.getElementById("delete-count").setAttribute("value", "0")
     } else if (coordinates.x > start + inc * 9 && coordinates.x <= start + inc * 10) {
-        xPos = start + (inc * 10) * (18 / 19)
+        xPos = start + (inc * 10) * (18 / 19)- divOffset
         projected_note.setAttribute("cx", String(xPos))
         projected_note.setAttribute("cy", String(yPos))
         document.getElementById("delete-count").setAttribute("value", "0")
     } else if (coordinates.x > start + inc * 10 && coordinates.x <= start + inc * 11) {
-        xPos = start + (inc * 11) * (20 / 21)
+        xPos = start + (inc * 11) * (20 / 21)- divOffset
         projected_note.setAttribute("cx", String(xPos))
         projected_note.setAttribute("cy", String(yPos))
         document.getElementById("delete-count").setAttribute("value", "2")
     } else if (coordinates.x > start + inc * 11 && coordinates.x <= start + inc * 12) {
-        xPos = start + (inc * 12) * (22 / 23)
+        xPos = start + (inc * 12) * (22 / 23)- divOffset
         projected_note.setAttribute("cx", String(xPos))
         projected_note.setAttribute("cy", String(yPos))
         document.getElementById("delete-count").setAttribute("value", "1")
     } else if (coordinates.x > start + inc * 12 && coordinates.x <= start + inc * 13) {
-        xPos = start + (inc * 13) * (24 / 25)
+        xPos = start + (inc * 13) * (24 / 25)- divOffset
         projected_note.setAttribute("cx", String(xPos))
         projected_note.setAttribute("cy", String(yPos))
         document.getElementById("delete-count").setAttribute("value", "0")
     } else if (coordinates.x > start + inc * 13 && coordinates.x <= start + inc * 14) {
-        xPos = start + (inc * 14) * (26 / 27)
+        xPos = start + (inc * 14) * (26 / 27)- divOffset
         projected_note.setAttribute("cx", String(xPos))
         projected_note.setAttribute("cy", String(yPos))
         document.getElementById("delete-count").setAttribute("value", "0")
     } else if (coordinates.x > start + inc * 14 && coordinates.x <= start + inc * 15) {
-        xPos = start + (inc * 15) * (28 / 29)
+        xPos = start + (inc * 15) * (28 / 29)- divOffset
         projected_note.setAttribute("cx", String(xPos))
         projected_note.setAttribute("cy", String(yPos))
         document.getElementById("delete-count").setAttribute("value", "0")
@@ -93,7 +95,7 @@ $(document).ready(function () {
     let div = document.getElementById("boo")
     let renderer = new VF.Renderer(div, VF.Renderer.Backends.SVG);
     let rendererHeight = 200
-    let rendererWidth = 500
+    let rendererWidth = 460
 
     renderer.resize(rendererWidth, rendererHeight);
 
