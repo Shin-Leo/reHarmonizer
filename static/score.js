@@ -14,7 +14,6 @@ function projectNote(rect, coordinates, availableWidth) {
     if (coordinates.x >= start && coordinates.x <= start + inc) {
         xPos = start + (inc / 2) - divOffset
         projected_note.setAttribute("cx", String(xPos))
-        console.log(projected_note.getAttribute("cx"))
         projected_note.setAttribute("cy", String(yPos))
         document.getElementById("delete-count").setAttribute("value", "3")
     } else if (coordinates.x > start + inc && coordinates.x <= start + inc * 2) {
@@ -90,23 +89,27 @@ function projectNote(rect, coordinates, availableWidth) {
     }
 }
 document.querySelector("#boo > svg")
-$(document).ready(function () {
-    VF = Vex.Flow;
+
+function newStave() {
     let div = document.getElementById("boo")
     let renderer = new VF.Renderer(div, VF.Renderer.Backends.SVG);
     let rendererHeight = 200
     let rendererWidth = 460
-
     renderer.resize(rendererWidth, rendererHeight);
-
-    let context = renderer.getContext();
+    let vexContext = renderer.getContext();
     let staveX = 440
     let staveY = 50
     let stave = new VF.Stave(10, staveY, staveX);
+    return {renderer, rendererHeight, rendererWidth, vexContext, staveX, staveY, stave};
+}
+
+$(document).ready(function () {
+    VF = Vex.Flow;
+    let {renderer, rendererHeight, rendererWidth, vexContext, staveX, staveY, stave} = newStave();
 
     stave.addClef("treble").addTimeSignature("4/4");
 
-    stave.setContext(context).draw();
+    stave.setContext(vexContext).draw();
     let svg = document.querySelector("#boo > svg")
     let yRectWidth = 0
     let xRectHeight = 0
@@ -160,7 +163,6 @@ $(document).ready(function () {
         rect.addEventListener("mousemove", function (e) {
             document.querySelector("#note-projection").attributes[5].value = "1"
             projectNote(e.target.attributes, getMousePosition(e, pt), staveX - e.target.attributes[1].value)
-
         })
         rect.addEventListener("mouseleave", function (e) {
             document.querySelector("#note-projection").attributes[5].value = "1"
@@ -173,7 +175,7 @@ $(document).ready(function () {
     svg.addEventListener("click", function (e) {
         let projectionX = document.querySelector("#note-projection").attributes[1].value
         let projectionY = document.querySelector("#note-projection").attributes[2].value
-        drawNote(projectionX, projectionY, xRectangles, context, stave, svg)
+        drawNote(projectionX, projectionY, xRectangles, vexContext, stave, svg, renderer, rendererWidth, rendererHeight)
         getMousePosition(e, pt)
     })
 
@@ -248,7 +250,7 @@ function evalFillLength(remainder) {
     return context
 }
 
-function drawNote(pX, pY, rects, context, stave, svg) {
+function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth, rendererHeight) {
     let subdivision = document.querySelector("#subdivision").getAttribute("value")
     let fillCount = document.querySelector("#fill-count")
     let drawnNotes = document.querySelector('#drawn-notes')
@@ -318,7 +320,6 @@ function drawNote(pX, pY, rects, context, stave, svg) {
         }
         let voice = new VF.Voice({num_beats: 4, beat_value: 4});
         voice.addTickables(notes);
-
         let formatter = new VF.Formatter().joinVoices([voice]).format([voice], 400);
         let svgChildNodes = svg.childNodes
         let staticLength = svgChildNodes.length
@@ -329,8 +330,25 @@ function drawNote(pX, pY, rects, context, stave, svg) {
                 break
             }
         }
-        voice.draw(context, stave);
+        vexContext = renderer.getContext()
+        let newStaveAttributes = newStave()
+        let nStave = newStaveAttributes['stave']
+        let nVexContext = newStaveAttributes['vexContext']
+        voice.draw(vexContext, stave);
+        nStave.setContext(nVexContext).draw();
     }
+    // code for setting up single note addition
+    // let tickContext = new VF.TickContext()
+    // let visibleNotes = []
+    // else {
+    //         const group = vexContext.openGroup()
+    //         visibleNotes.push(group)
+    //         tickContext.addTickable(newNote)
+    //         tickContext.preFormat().setX(200)
+    //                 let newNote = new VF.StaveNote({clef: "treble", keys: [note], duration: duration}).setContext(context).setStave(stave)
+    //         newNote.draw()
+    //         vexContext.closeGroup()
+    // }
 
     /*
     while (remainingToFill !== 0) {

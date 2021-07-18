@@ -11,11 +11,13 @@
     <script src="{{ url_for('static', filename='/score.js') }}"></script>
 </head>
 <body>
-<div class="container">
-    <div class="h-100 row align-items-center">
+<div class="container-fluid">
+    <div class="h-100 w-90 row">
         <div class="col"></div>
         <div class="col" id="center-col">
+            <div class="row">
             <div id="boo"></div>
+            </div>
             <div class="elements">
                 <input type="hidden" value="" id="delete-count">
                 <input type="hidden" value="0" id="fill-count">

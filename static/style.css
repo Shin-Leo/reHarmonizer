@@ -3,7 +3,7 @@ body {
     height: 90%
 }
 
-.container {
+.container-fluid {
     height: 100%
 }
 
@@ -53,6 +53,10 @@ body {
     fill: #ffe08a;
     fill-opacity: 0.5;
 }
+.row {
+    align-items: center;
+    width: 100%;
+}
 
 .col {
     align-items: center;
@@ -60,4 +64,9 @@ body {
 
 .elements {
     text-align: center;
+}
+
+#boo {
+    text-align: center;
+    display: flex;
 }
