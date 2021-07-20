@@ -281,6 +281,8 @@ function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth
         }
     })
     document.querySelector('#note-group').insertAdjacentHTML('beforeend', `<ellipse id=\"${fillCountValue + note}\" cx=\"0\" cy=\"0\" rx=\"5\" ry=\"4\" opacity=\"1\"/>`)
+
+
     let drawnNote = document.getElementById(fillCountValue + note)
     drawnNote.setAttribute("cx", pX)
     drawnNote.setAttribute("cy", pY)
@@ -328,13 +330,33 @@ function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth
                 break
             }
         }
+
+        fillCapacity += 4
         vexContext = renderer.getContext()
         let newStaveAttributes = newStave()
         let nStave = newStaveAttributes['stave']
         let nVexContext = newStaveAttributes['vexContext']
+
+        let innerRow = document.querySelector("#inner-row")
+        let leftCol = document.querySelector("#left-col")
+        let rightCol = document.querySelector("#right-col")
+        let numberOfSvgs = fillCapacity/4
+        document.getElementById("inner-row").style.width = "32424"
+
+
+
+        console.log(document.getElementById("inner-row").style.width)
+
         voice.draw(vexContext, stave);
         nStave.setContext(nVexContext).draw();
         let newSvg = document.querySelector("#boo").lastChild
+
+        for (let childSvg of document.querySelector("#boo").childNodes) {
+            let bbox = childSvg.getBBox();
+            let viewBox = [bbox.x, bbox.y, bbox.width, bbox.height].join(" ");
+            childSvg.setAttribute("viewBox", viewBox);
+        }
+
 
         let {
             yRectWidth,

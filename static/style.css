@@ -53,9 +53,22 @@ body {
     fill: #ffe08a;
     fill-opacity: 0.5;
 }
+
 .row {
+      display: inline-flex;
+
     align-items: center;
+    text-align: center;
     width: 100%;
+        align-content: center;
+
+}
+
+.itemInvisible {
+  flex: 0 1 auto;
+  width: 40%;
+  height: 100%;
+  visibility: hidden;
 }
 
 .col {
@@ -68,5 +81,15 @@ body {
 
 #boo {
     text-align: center;
-    display: flex;
+  display: inline-flex;
+  flex-wrap: wrap;
+    align-content: flex-start;
+}
+
+#inner-row {
+    width: 460px;
+}
+
+div#left-col, div#right-col {
+    max-width: 45%;
 }
