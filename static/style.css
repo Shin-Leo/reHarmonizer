@@ -86,9 +86,6 @@ body {
     align-content: flex-start;
 }
 
-#inner-row {
-    width: 460px;
-}
 
 div#left-col, div#right-col {
     max-width: 45%;

@@ -9,14 +9,15 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/style.css') }}">
     <script src="{{ url_for('static', filename='/vexflow-min.js') }}"></script>
     <script src="{{ url_for('static', filename='/score.js') }}"></script>
+
 </head>
 <body>
 <div class="container-fluid">
     <div class="h-100 w-90 row">
         <div class="col" id="left-col"></div>
         <div class="col" id="center-col">
-            <div class="row" id="inner-row">
-            <div id="boo"></div>
+            <div class="row" id="inner-row" style="width: 460px">
+                <div id="boo"></div>
             </div>
             <div class="elements">
                 <input type="hidden" value="" id="delete-count">

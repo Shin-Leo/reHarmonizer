@@ -1,38 +1,46 @@
-function projectNote(rect, coordinates, availableWidth) {
+function projectNote(rectangle, coordinates, availableWidth) {
     let divOffset = document.querySelector("#center-col").offsetLeft
-    let start = parseInt(rect[1].value) + divOffset + 3
+    let rect = rectangle.attributes
+    let rectId = rect[0].value.split("-")[1]
+    let start = parseInt(rect[1].value) * rectId + divOffset + 3
+    console.log(coordinates.x)
+    let barOffset = (parseInt(rectId) - 1) * availableWidth + parseInt(rect[1].value)
+    if (rectId === 2) {
+        divOffset = 0
+    }
+    let width = String(availableWidth)
     let subdivision = document.querySelector('#subdivision').attributes.getNamedItem('value').value
-    let projected_note = document.getElementById("note-projection")
-    let inc = parseInt(availableWidth) / 4
+    let projected_note = document.querySelector("#boo").lastChild.lastChild
+    let inc = parseInt(width) / 4
     if (subdivision === "Eighth Note") {
-        inc = parseInt(availableWidth) / 8
+        inc = parseInt(width) / 8
     } else if (subdivision === "Sixteenth Note") {
-        inc = parseInt(availableWidth) / 16
+        inc = parseInt(width) / 16
     }
     let xPos = 0
     let yPos = rect[2].value - 2.5
     if (coordinates.x >= start && coordinates.x <= start + inc) {
-        xPos = start + (inc / 2) - divOffset
+        xPos = start + (inc / 2) - divOffset - barOffset
         projected_note.setAttribute("cx", String(xPos))
         projected_note.setAttribute("cy", String(yPos))
         document.getElementById("delete-count").setAttribute("value", "3")
     } else if (coordinates.x > start + inc && coordinates.x <= start + inc * 2) {
-        xPos = start + (inc * 2) * (3 / 4) - divOffset
+        xPos = start + (inc * 2) * (3 / 4) - divOffset - barOffset
         projected_note.setAttribute("cx", String(xPos))
         projected_note.setAttribute("cy", String(yPos))
         document.getElementById("delete-count").setAttribute("value", "2")
     } else if (coordinates.x > start + inc * 2 && coordinates.x <= start + inc * 3) {
-        xPos = start + ((inc * 3) * (5 / 6)) - divOffset
+        xPos = start + ((inc * 3) * (5 / 6)) - divOffset - barOffset
         projected_note.setAttribute("cx", String(xPos))
         projected_note.setAttribute("cy", String(yPos))
         document.getElementById("delete-count").setAttribute("value", "1")
     } else if (coordinates.x > start + inc * 3 && coordinates.x <= start + inc * 4) {
-        xPos = start + (inc * 4) * (7 / 8) - divOffset
+        xPos = start + (inc * 4) * (7 / 8) - divOffset - barOffset
         projected_note.setAttribute("cx", String(xPos))
         projected_note.setAttribute("cy", String(yPos))
         document.getElementById("delete-count").setAttribute("value", "0")
     } else if (coordinates.x > start + inc * 4 && coordinates.x <= start + inc * 5) {
-        xPos = start + (inc * 5) * (9 / 10) - divOffset
+        xPos = start + (inc * 5) * (9 / 10) - divOffset - barOffset
         projected_note.setAttribute("cx", String(xPos))
         projected_note.setAttribute("cy", String(yPos))
         document.getElementById("delete-count").setAttribute("value", "2")
@@ -110,32 +118,32 @@ function addNoteBoundaries(id, yRectWidth, staveX, index, letters, inc, xRectHei
         let xRectangleHtml;
         index = i % letters.length;
         if (i % 2) {
-            xRectangleHtml = `<rect id=\"${letters[index] + String(inc)}\" x=\"${staveX * 0.2}\" y=\"${xRectHeight + multiplier * staveY}\" width=\"300\" height=\"6\" style=\"fill:rgb(183,241,222);\" opacity=\"0\">\n"+"</rect>`
+            xRectangleHtml = `<rect id=\"${letters[index] + String(inc) + "-" + String(id) + "-"}\" x=\"${staveX * 0.2}\" y=\"${xRectHeight + multiplier * staveY}\" width=\"350\" height=\"6\" style=\"fill:rgb(183,241,222);\" opacity=\"0\">\n"+"</rect>`
             xRectHeight += 6
         } else {
-            xRectangleHtml = `<rect id=\"${letters[index] + String(inc)}\" x=\"${staveX * 0.2}\" y=\"${xRectHeight + multiplier * staveY}\" width=\"300\" height=\"4\" style=\"fill:rgb(183,241,222);\" opacity=\"0\">\n"+"</rect>`
+            xRectangleHtml = `<rect id=\"${letters[index] + String(inc) + "-" + String(id) + "-"}\" x=\"${staveX * 0.2}\" y=\"${xRectHeight + multiplier * staveY}\" width=\"350\" height=\"4\" style=\"fill:rgb(183,241,222);\" opacity=\"0\">\n"+"</rect>`
             xRectHeight += 4
         }
         // svg.insertAdjacentHTML('beforeennd', yRectangleHtml)
         svg.insertAdjacentHTML('beforeend', xRectangleHtml)
         yRectWidth += 20
         let yRectangle = document.getElementById(letters[index] + inc)
-        let xRectangle = document.getElementById(letters[index] + inc)
+        let xRectangle = document.getElementById(letters[index] + inc + "-" + id + "-")
         xRectangles.push(xRectangle)
         // yRectangles.push(yRectangle)
-        id += 1
         if (letters[index] === letters[0]) {
             inc--;
         }
     }
     xRectangles.forEach((rect) => {
         rect.addEventListener("mousemove", function (e) {
-            document.querySelector("#note-projection").attributes[5].value = "1"
-            projectNote(e.target.attributes, getMousePosition(e, pt), staveX - e.target.attributes[1].value)
+            console.log(document.querySelector("#boo").lastChild.lastChild)
+            document.querySelector("#boo").lastChild.lastChild.attributes[5].value = "1"
+            projectNote(e.target, getMousePosition(e, pt), staveX - e.target.attributes[1].value)
         })
         rect.addEventListener("mouseleave", function (e) {
             document.querySelector("#note-projection").attributes[5].value = "1"
-            projectNote(e.target.attributes, getMousePosition(e, pt), staveX - e.target.attributes[1].value)
+            projectNote(e.target, getMousePosition(e, pt), staveX - e.target.attributes[1].value)
         })
         svg.addEventListener("mouseleave", function (e) {
             document.querySelector("#note-projection").attributes[5].value = "0"
@@ -252,8 +260,8 @@ function evalFillLength(remainder) {
 function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth, rendererHeight, staveX, staveY) {
     let subdivision = document.querySelector("#subdivision").getAttribute("value")
     let fillCount = document.querySelector("#fill-count")
-    let drawnNotes = document.querySelector('#drawn-notes')
-    let drawnNotesValue = document.querySelector("#drawn-notes").getAttribute("value")
+    let drawnNotes = document.getElementById("drawn-notes")
+    let drawnNotesValue = ""
     let fillCountValue = parseFloat(fillCount.attributes[1].value)
     let note = ""
     if (subdivision === "Quarter Note") {
@@ -282,24 +290,15 @@ function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth
     })
     document.querySelector('#note-group').insertAdjacentHTML('beforeend', `<ellipse id=\"${fillCountValue + note}\" cx=\"0\" cy=\"0\" rx=\"5\" ry=\"4\" opacity=\"1\"/>`)
 
-
+    drawnNotesValue = drawnNotes.attributes[1].value +  (note + ",")
     let drawnNote = document.getElementById(fillCountValue + note)
     drawnNote.setAttribute("cx", pX)
     drawnNote.setAttribute("cy", pY)
-    drawnNotesValue = drawnNotesValue + note + ","
+    note = note.split("/")[note.length - 2]
 
-    drawnNotes.setAttribute("value", drawnNotesValue)
+    drawnNotes.attributes[1].value = drawnNotesValue
 
-    let drawnNoteAndLengthList = drawnNotesValue.split(",")
-    drawnNoteAndLengthList.pop()
-    let drawnNoteLengthValues = []
-    let drawnNoteKeyValues = []
-    for (let note of drawnNoteAndLengthList) {
-        let timeValue = note.split(":")[0]
-        let noteKey = note.split(":")[1]
-        drawnNoteLengthValues.push(timeValue)
-        drawnNoteKeyValues.push(noteKey)
-    }
+
     let notes = [];
     let dec = 0;
     let i = 0;
@@ -308,6 +307,17 @@ function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth
     let deleteCount = 0
     let remainingToFill = fillCapacity - fillCountValue
     if (fillCountValue >= fillCapacity) {
+        let drawnNoteAndLengthList = drawnNotesValue.split(",")
+        drawnNoteAndLengthList.pop()
+        let drawnNoteLengthValues = []
+        let drawnNoteKeyValues = []
+        for (let note of drawnNoteAndLengthList) {
+            let timeValue = note.split(":")[0]
+            let noteAndMeasureKey = note.split(":")[1]
+            let noteKey = noteAndMeasureKey.split("-")[0]
+            drawnNoteLengthValues.push(timeValue)
+            drawnNoteKeyValues.push(noteKey)
+        }
         while (fillCountValue > 0 && drawnNoteLengthValues.length > 0 && drawnNoteKeyValues.length > 0) {
             note = drawnNoteKeyValues[i]
             let context = evalNoteLength(drawnNoteLengthValues[i])
@@ -326,8 +336,9 @@ function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth
         for (let i = 0; i < staticLength; i++) {
             let element = svgChildNodes[i]
             if (element !== null && element.nodeName === "g" && element.attributes !== null && element.attributes[0].value !== "note-projection") {
-                element.remove()
-                break
+                element.childNodes.forEach((item) => {
+                    item.attributes[3].value = "0"
+                })
             }
         }
 
@@ -340,22 +351,30 @@ function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth
         let innerRow = document.querySelector("#inner-row")
         let leftCol = document.querySelector("#left-col")
         let rightCol = document.querySelector("#right-col")
-        let numberOfSvgs = fillCapacity/4
-        document.getElementById("inner-row").style.width = "32424"
-
-
-
-        console.log(document.getElementById("inner-row").style.width)
+        let numberOfSvgs = fillCapacity / 4
+        document.getElementById("inner-row").style.width = String(rendererWidth * numberOfSvgs) + "px"
 
         voice.draw(vexContext, stave);
         nStave.setContext(nVexContext).draw();
         let newSvg = document.querySelector("#boo").lastChild
 
+
+        newSvg.addEventListener("click", function (e) {
+            let projectionX = document.querySelector("#note-projection").attributes[1].value
+            let projectionY = document.querySelector("#note-projection").attributes[2].value
+            drawNote(projectionX, projectionY, xRectangles, vexContext, stave, svg, renderer, rendererWidth, rendererHeight, staveX, staveY)
+            getMousePosition(e, pt)
+        })
+
+        let viewBox = ""
+
         for (let childSvg of document.querySelector("#boo").childNodes) {
             let bbox = childSvg.getBBox();
-            let viewBox = [bbox.x, bbox.y, bbox.width, bbox.height].join(" ");
+            viewBox = [bbox.x, bbox.y, bbox.width, bbox.height].join(" ");
             childSvg.setAttribute("viewBox", viewBox);
         }
+
+        document.querySelector("#boo").children[0].setAttribute("viewBox", viewBox)
 
 
         let {
@@ -369,8 +388,12 @@ function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth
             letters,
             pt
         } = setupBoundaryParams(newSvg);
+        id = numberOfSvgs
+        id = String(id)
         letters = ['c/', 'b/', 'a/', 'g/', 'f/', 'e/', 'd/']
         addNoteBoundaries(id, yRectWidth, staveX, index, letters, inc, xRectHeight, multiplier, staveY, newSvg, xRectangles, pt);
+
+        newSvg.insertAdjacentHTML('beforeend', `<ellipse id=${id} cx=\"400\" cy=\"400\" rx=\"5\" ry=\"4\" opacity=\"1\"/>`)
     }
     // code for setting up single note addition
     // let tickContext = new VF.TickContext()
