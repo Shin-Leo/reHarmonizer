@@ -1,4 +1,7 @@
-function projectNote(rectangle, coordinates, availableWidth) {
+function projectNote(xPos, rectangle, availableWidth) {
+    if (xPos === "none" && (rectangle.attributes[0].id !== "note-projection")) {
+        return
+    }
     let divOffset = document.querySelector("#center-col").offsetLeft
     let rect = rectangle.attributes
     let rectId = rect[0].value.split("-")[1]
@@ -8,89 +11,9 @@ function projectNote(rectangle, coordinates, availableWidth) {
     let subdivision = document.querySelector('#subdivision').attributes.getNamedItem('value').value
     let projected_note = document.querySelector("#boo").lastChild.lastChild
     let inc = parseInt(width) / 4
-    if (subdivision === "Eighth Note") {
-        inc = parseInt(width) / 8
-    } else if (subdivision === "Sixteenth Note") {
-        inc = parseInt(width) / 16
-    }
-    let xPos = 0
     let yPos = rect[2].value - 2.5
-    if (coordinates.x >= start && coordinates.x <= start + inc) {
-        xPos = start + (inc / 2) - divOffset - barOffset
-        projected_note.setAttribute("cx", String(xPos))
-        projected_note.setAttribute("cy", String(yPos))
-        document.getElementById("delete-count").setAttribute("value", "3")
-    } else if (coordinates.x > start + inc && coordinates.x <= start + inc * 2) {
-        xPos = start + (inc * 2) * (3 / 4) - divOffset - barOffset
-        projected_note.setAttribute("cx", String(xPos))
-        projected_note.setAttribute("cy", String(yPos))
-        document.getElementById("delete-count").setAttribute("value", "2")
-    } else if (coordinates.x > start + inc * 2 && coordinates.x <= start + inc * 3) {
-        xPos = start + ((inc * 3) * (5 / 6)) - divOffset - barOffset
-        projected_note.setAttribute("cx", String(xPos))
-        projected_note.setAttribute("cy", String(yPos))
-        document.getElementById("delete-count").setAttribute("value", "1")
-    } else if (coordinates.x > start + inc * 3 && coordinates.x <= start + inc * 4) {
-        xPos = start + (inc * 4) * (7 / 8) - divOffset - barOffset
-        projected_note.setAttribute("cx", String(xPos))
-        projected_note.setAttribute("cy", String(yPos))
-        document.getElementById("delete-count").setAttribute("value", "0")
-    } else if (coordinates.x > start + inc * 4 && coordinates.x <= start + inc * 5) {
-        xPos = start + (inc * 5) * (9 / 10) - divOffset - barOffset
-        projected_note.setAttribute("cx", String(xPos))
-        projected_note.setAttribute("cy", String(yPos))
-        document.getElementById("delete-count").setAttribute("value", "2")
-    } else if (coordinates.x > start + inc * 5 && coordinates.x <= start + inc * 6) {
-        xPos = start + ((inc * 6) * (11 / 12)) - divOffset - barOffset
-        projected_note.setAttribute("cx", String(xPos))
-        projected_note.setAttribute("cy", String(yPos))
-        document.getElementById("delete-count").setAttribute("value", "1")
-    } else if (coordinates.x > start + inc * 6 && coordinates.x <= start + inc * 7) {
-        xPos = start + (inc * 7) * (13 / 14) - divOffset - barOffset
-        projected_note.setAttribute("cx", String(xPos))
-        projected_note.setAttribute("cy", String(yPos))
-        document.getElementById("delete-count").setAttribute("value", "0")
-    } else if (coordinates.x > start + inc * 7 && coordinates.x <= start + inc * 8) {
-        xPos = start + (inc * 8) * (14 / 15) - divOffset - barOffset
-        projected_note.setAttribute("cx", String(xPos))
-        projected_note.setAttribute("cy", String(yPos))
-        document.getElementById("delete-count").setAttribute("value", "0")
-    } else if (coordinates.x > start + inc * 8 && coordinates.x <= start + inc * 9) {
-        xPos = start + (inc * 9) * (16 / 17) - divOffset - barOffset
-        projected_note.setAttribute("cx", String(xPos))
-        projected_note.setAttribute("cy", String(yPos))
-        document.getElementById("delete-count").setAttribute("value", "0")
-    } else if (coordinates.x > start + inc * 9 && coordinates.x <= start + inc * 10) {
-        xPos = start + (inc * 10) * (18 / 19) - divOffset - barOffset
-        projected_note.setAttribute("cx", String(xPos))
-        projected_note.setAttribute("cy", String(yPos))
-        document.getElementById("delete-count").setAttribute("value", "0")
-    } else if (coordinates.x > start + inc * 10 && coordinates.x <= start + inc * 11) {
-        xPos = start + (inc * 11) * (20 / 21) - divOffset - barOffset
-        projected_note.setAttribute("cx", String(xPos))
-        projected_note.setAttribute("cy", String(yPos))
-        document.getElementById("delete-count").setAttribute("value", "2")
-    } else if (coordinates.x > start + inc * 11 && coordinates.x <= start + inc * 12) {
-        xPos = start + (inc * 12) * (22 / 23) - divOffset - barOffset
-        projected_note.setAttribute("cx", String(xPos))
-        projected_note.setAttribute("cy", String(yPos))
-        document.getElementById("delete-count").setAttribute("value", "1")
-    } else if (coordinates.x > start + inc * 12 && coordinates.x <= start + inc * 13) {
-        xPos = start + (inc * 13) * (24 / 25) - divOffset - barOffset
-        projected_note.setAttribute("cx", String(xPos))
-        projected_note.setAttribute("cy", String(yPos))
-        document.getElementById("delete-count").setAttribute("value", "0")
-    } else if (coordinates.x > start + inc * 13 && coordinates.x <= start + inc * 14) {
-        xPos = start + (inc * 14) * (26 / 27) - divOffset
-        projected_note.setAttribute("cx", String(xPos))
-        projected_note.setAttribute("cy", String(yPos))
-        document.getElementById("delete-count").setAttribute("value", "0")
-    } else if (coordinates.x > start + inc * 14 && coordinates.x <= start + inc * 15) {
-        xPos = start + (inc * 15) * (28 / 29) - divOffset
-        projected_note.setAttribute("cx", String(xPos))
-        projected_note.setAttribute("cy", String(yPos))
-        document.getElementById("delete-count").setAttribute("value", "0")
-    }
+    projected_note.setAttribute("cx", String(xPos))
+    projected_note.setAttribute("cy", String(yPos))
 }
 
 document.querySelector("#boo > svg")
@@ -110,12 +33,16 @@ function newStave() {
 
 function addNoteBoundaries(id, yRectWidth, staveX, index, letters, inc, xRectHeight, multiplier, staveY, svg, xRectangles, pt) {
     let yRectangles = []
+    let yId  = id
+    let rectWidth = yRectWidth - 20
     for (let i = 0; i < 16; i++) {
-        yRectWidth += 20
-        let yRectangleHtml = `<rect id=\"${"yRectangleHtml" + id}\" x=\"${yRectWidth + staveX * 0.2}\" y=\"50\" width=\"20\" height=\"100\" style=\"fill:rgb(183,241,222);\" opacity=\"0\">\n"+"</rect>`
+        rectWidth += 21.875
+        let rectId = "yRectangleHtml-" + String(yId)
+        let yRectangleHtml = `<rect id=\"${rectId}\" x=\"${rectWidth + staveX * 0.2}\" y=\"60\" width=\"21.875\" height=\"100\" style=\"fill:rgb(183,241,222);\" opacity=\"0\">\n"+"</rect>`
         svg.insertAdjacentHTML('beforeEnd', yRectangleHtml)
         let yRectangle = document.getElementById(letters[index] + inc + "-" + id + "-")
         yRectangles.push(yRectangle)
+        yId++
     }
     for (let i = 0; i < 16; i++) {
         let xRectangleHtml;
@@ -134,39 +61,6 @@ function addNoteBoundaries(id, yRectWidth, staveX, index, letters, inc, xRectHei
             inc--;
         }
     }
-
-    xRectangles.forEach((rect) => {
-        rect.addEventListener("mousemove", function (e) {
-            // let svgIndex = parseInt(e.target.attributes[0].value.split("-")[1]) - 1
-            // let temp = e.target.outerHTML.replace("\"+\"", "")
-            // let svg = document.querySelector("#boo").childNodes[svgIndex]
-            // let rpos  = svg.createSVGRect()
-            // console.log()
-            // rpos.x = parseInt(e.target.attributes[0].value)
-            // rpos.y = parseInt(e.target.attributes[1].value)
-            // rpos.width = rpos.height = parseInt(e.target.attributes[2].value)
-            //
-
-            // document.querySelector("#boo").childNodes[svgIndex].appendChild(e.target)
-            // document.querySelector("#boo").childNodes[svgIndex].insertAdjacentHTML('beforeend', temp)
-            projectNote(e.target, getMousePosition(e, pt), staveX - e.target.attributes[1].value)
-        })
-        rect.addEventListener("mouseleave", function (e) {
-            document.querySelector("#note-projection").attributes[5].value = "1"
-            projectNote(e.target, getMousePosition(e, pt), staveX - e.target.attributes[1].value)
-        })
-        svg.addEventListener("mouseleave", function (e) {
-            document.querySelector("#note-projection").attributes[5].value = "0"
-        })
-        // yRectangles.forEach((rect) => {
-        //     rect.addEventListener("mousemove", function (e) {
-        //         let svgIndex = parseInt(e.target.attributes[0].value.split("-")[1]) - 1
-        //         console.log(e.current)
-        //         let xRectangle = document.querySelector("#boo").childNodes[svgIndex].lastChild
-        //         projectNote(xRectangle, getMousePosition(e, pt), staveX - parseInt(xRectangle.attributes.x))
-        //     })
-        // })
-    })
 }
 
 function setupBoundaryParams(svg) {
@@ -206,15 +100,21 @@ $(document).ready(function () {
     svg.addEventListener("mousemove", function (evt) {
         let svgIndex = parseInt(evt.target.attributes[0].value.split("-")[1]) - 1
         let svg = document.querySelector("#boo").childNodes[0]
-        let rpos = svg.createSVGRect()
-        rpos.x = evt.clientX
-        rpos.y = evt.clientY
-        console.log(rpos.x)
-        console.log(rpos.y)
-        console.log(document.elementsFromPoint(rpos.x, rpos.y))
-        rpos.width = 1000
-        rpos.height = 1000
-        console.log(svg.getIntersectionList(rpos, null))
+        let elementList = document.elementsFromPoint(evt.clientX, evt.clientY)
+        if ((elementList.length === 10 || elementList.length === 11) && elementList[0].attributes.length >3) {
+            console.log(elementList)
+            let hBar = elementList[0]
+            let vBar = elementList[1]
+
+            console.log(hBar)
+            console.log(vBar)
+            if (hBar[0] !== undefined && hBar[0].id === "note-projection") {
+                return
+            }
+            let xposition = vBar.attributes[1].value
+            projectNote(xposition, hBar, staveX)
+        }
+
     })
 
 
