@@ -219,7 +219,6 @@ function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth
             temp = Number.MAX_SAFE_INTEGER
         }
     })
-    console.log('#note-group-' + note.split("-")[1])
     document.querySelector('#note-group-' + note.split("-")[1]).insertAdjacentHTML('beforeend', `<ellipse id=\"${fillCountValue + note}\" cx=\"0\" cy=\"0\" rx=\"5\" ry=\"4\" opacity=\"1\"/>`)
 
     drawnNotesValue = drawnNotes.attributes[1].value + (note + ",")
@@ -233,46 +232,42 @@ function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth
 
     let notes = [];
     let dec = 0;
-    let i = 0;
     let duration = ""
-    let deleteCount = 0
-    let remainingToFill = fillCapacity - fillCountValue
+    let startIndex = ((fillCapacity / 4) - 1) * 4
+    let i = startIndex;
     if (fillCountValue >= fillCapacity) {
-        document.querySelector("#fill-capacity").setAttribute("value", String(fillCapacity + 4))
         let drawnNoteAndLengthList = drawnNotesValue.split(",")
         drawnNoteAndLengthList.pop()
         let drawnNoteLengthValues = []
         let drawnNoteKeyValues = []
-        for (let note of drawnNoteAndLengthList) {
-            let timeValue = note.split(":")[0]
-            let noteAndMeasureKey = note.split(":")[1]
+        for (let i = startIndex; i < drawnNoteAndLengthList.length; i++) {
+            let timeValue = drawnNoteAndLengthList[i].split(":")[0]
+            let noteAndMeasureKey = drawnNoteAndLengthList[i].split(":")[1]
             let noteKey = noteAndMeasureKey.split("-")[0]
             drawnNoteLengthValues.push(timeValue)
             drawnNoteKeyValues.push(noteKey)
         }
-        while (fillCountValue > 0 && drawnNoteLengthValues.length > 0 && drawnNoteKeyValues.length > 0) {
-            note = drawnNoteKeyValues[i]
-            let context = evalNoteLength(drawnNoteLengthValues[i])
-            dec = context["dec"]
-            duration = context["duration"]
-            let newNote = new VF.StaveNote({clef: "treble", keys: [note], duration: duration})
-            notes.push(newNote)
-            fillCountValue -= dec
-            i++
-        }
-        let voice = new VF.Voice({num_beats: 4, beat_value: 4});
-        voice.addTickables(notes);
-        let formatter = new VF.Formatter().joinVoices([voice]).format([voice], 400);
-        let svgChildNodes = svg.childNodes
+        let svgChildNodes = svgArray[((fillCapacity / 4) - 1)].childNodes
         let staticLength = svgChildNodes.length
         for (let i = 0; i < staticLength; i++) {
             let element = svgChildNodes[i]
-            if (element !== null && element.nodeName === "g" && element.attributes !== null && element.attributes[0].value !== "note-projection") {
+            if (element !== null && element.nodeName === "g" && element.className !== "vf-stavenote" && element.attributes !== null && element.attributes[0].value !== "note-projection") {
                 element.childNodes.forEach((item) => {
                     item.attributes[3].value = "0"
                 })
             }
         }
+        drawnNoteKeyValues.forEach((note, i) => {
+            duration = evalNoteLength(drawnNoteLengthValues[i])['duration']
+            let newNote = new VF.StaveNote({clef: "treble", keys: [note], duration: duration})
+            notes.push(newNote)
+        })
+
+        document.querySelector("#fill-capacity").setAttribute("value", String(fillCapacity + 4))
+        let voice = new VF.Voice({num_beats: 4, beat_value: 4});
+        voice.addTickables(notes);
+        let formatter = new VF.Formatter().joinVoices([voice]).format([voice], 400);
+
 
         vexContext = renderer.getContext()
         let newStaveAttributes = newStave()
@@ -280,12 +275,12 @@ function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth
         let nVexContext = newStaveAttributes['vexContext']
 
         let numberOfSvgs = fillCapacity / 4
-        console.log(numberOfSvgs)
         document.getElementById("inner-row").style.width = String(rendererWidth * (numberOfSvgs + 1)) + "px"
 
         voice.draw(vexContext, stave);
         nStave.setContext(nVexContext).draw();
         let newSvg = document.querySelector("#boo").lastChild
+
         rendererArray.push(renderer)
         vexContextArray.push(nVexContext)
         staveArray.push(nStave)
@@ -295,18 +290,14 @@ function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth
             if (!svgNumber) {
                 return
             }
-            console.log(svgNumber)
-            let selector = "#note-projection-" + String(svgNumber)
+            let selector = "#note-projection-" + String(svgNumber + 1)
             let projectionX = document.querySelector(selector).attributes[1].value
             let projectionY = document.querySelector(selector).attributes[2].value
             let currentRenderer = rendererArray[svgNumber]
             let currentVexContext = vexContextArray[svgNumber]
             let currentStave = staveArray[svgNumber]
             let currentSvg = svgArray[svgNumber]
-            console.log(currentRenderer)
-            console.log(currentVexContext)
-            console.log(currentStave)
-            console.log(currentSvg)
+
             drawNote(projectionX, projectionY, xRectangles, vexContext, stave, svg, renderer, rendererWidth, rendererHeight, staveX, staveY)
             getMousePosition(e, pt)
         })
@@ -337,7 +328,6 @@ function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth
         id = String(id)
         letters = ['c/', 'b/', 'a/', 'g/', 'f/', 'e/', 'd/']
         addNoteBoundaries(numberOfSvgs + 1, yRectWidth, staveX, index, letters, inc, xRectHeight, multiplier, staveY, newSvg, xRectangles, pt);
-        console.log("note-projection-" + String(numberOfSvgs + 1))
         let prevNoteProjection = document.getElementById("note-projection-" + String(numberOfSvgs))
         prevNoteProjection.attributes[5].value = 0
         let noteGroupId = "note-group-" + String(numberOfSvgs + 1)
@@ -349,11 +339,8 @@ function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth
             let svg = document.querySelector("#boo").childNodes[0]
             let elementList = document.elementsFromPoint(evt.clientX, evt.clientY)
             if ((elementList.length === 10 || elementList.length === 11) && elementList[0].attributes.length > 3) {
-                // console.log(elementList)
                 let hBar = elementList[0]
                 let vBar = elementList[1]
-                // console.log(hBar)
-                // console.log(vBar)
                 let xposition = vBar.attributes[1].value
                 projectNote(xposition, hBar, staveX, String(numberOfSvgs + 1))
             }
