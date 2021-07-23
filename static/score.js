@@ -269,15 +269,17 @@ function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth
         let formatter = new VF.Formatter().joinVoices([voice]).format([voice], 400);
 
 
-        vexContext = renderer.getContext()
+        vexContext = rendererArray[((fillCapacity / 4) - 1)].getContext()
         let newStaveAttributes = newStave()
         let nStave = newStaveAttributes['stave']
         let nVexContext = newStaveAttributes['vexContext']
 
         let numberOfSvgs = fillCapacity / 4
-        document.getElementById("inner-row").style.width = String(rendererWidth * (numberOfSvgs + 1)) + "px"
+        if (numberOfSvgs === 1) {
+            document.getElementById("inner-row").style.width = String(rendererWidth * (numberOfSvgs + 1)) + "px"
+        }
 
-        voice.draw(vexContext, stave);
+        voice.draw(vexContextArray[((fillCapacity / 4) - 1)], staveArray[((fillCapacity / 4) - 1)]);
         nStave.setContext(nVexContext).draw();
         let newSvg = document.querySelector("#boo").lastChild
 
