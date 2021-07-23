@@ -1,5 +1,11 @@
-function projectNote(xPos, rectangle, availableWidth) {
-    if (xPos === "none" && (rectangle.attributes[0].id !== "note-projection")) {
+let rendererArray = []
+let vexContextArray = []
+let staveArray = []
+let svgArray = []
+
+
+function projectNote(xPos, rectangle, availableWidth, id) {
+    if (xPos === "none" && (rectangle.attributes[0].id !== ("note-projection-" + id))) {
         return
     }
     let divOffset = document.querySelector("#center-col").offsetLeft
@@ -7,10 +13,9 @@ function projectNote(xPos, rectangle, availableWidth) {
     let rectId = rect[0].value.split("-")[1]
     let start = parseInt(rect[1].value) * rectId + divOffset + 3
     let barOffset = (parseInt(rectId) - 1) * (availableWidth + parseInt(rect[1].value) + 40)
-    let width = String(availableWidth)
     let subdivision = document.querySelector('#subdivision').attributes.getNamedItem('value').value
-    let projected_note = document.querySelector("#boo").lastChild.lastChild
-    let inc = parseInt(width) / 4
+    let selector = "note-projection-" + (id)
+    let projected_note = document.getElementById(selector)
     let yPos = rect[2].value - 2.5
     projected_note.setAttribute("cx", String(xPos))
     projected_note.setAttribute("cy", String(yPos))
@@ -31,18 +36,16 @@ function newStave() {
     return {renderer, rendererHeight, rendererWidth, vexContext, staveX, staveY, stave};
 }
 
-function addNoteBoundaries(id, yRectWidth, staveX, index, letters, inc, xRectHeight, multiplier, staveY, svg, xRectangles, pt) {
+function addNoteBoundaries(id, yRectWidth, staveX, index, letters, inc, xRectHeight, multiplier, staveY, svg, xRectangles, pt, numBar) {
     let yRectangles = []
-    let yId  = id
     let rectWidth = yRectWidth - 20
     for (let i = 0; i < 16; i++) {
         rectWidth += 21.875
-        let rectId = "yRectangleHtml-" + String(yId)
+        let rectId = "yRectangleHtml-" + String(id) + String(i + 1)
         let yRectangleHtml = `<rect id=\"${rectId}\" x=\"${rectWidth + staveX * 0.2}\" y=\"60\" width=\"21.875\" height=\"100\" style=\"fill:rgb(183,241,222);\" opacity=\"0\">\n"+"</rect>`
         svg.insertAdjacentHTML('beforeEnd', yRectangleHtml)
         let yRectangle = document.getElementById(letters[index] + inc + "-" + id + "-")
         yRectangles.push(yRectangle)
-        yId++
     }
     for (let i = 0; i < 16; i++) {
         let xRectangleHtml;
@@ -80,41 +83,36 @@ function setupBoundaryParams(svg) {
 $(document).ready(function () {
     VF = Vex.Flow;
     let {renderer, rendererHeight, rendererWidth, vexContext, staveX, staveY, stave} = newStave();
-    let svg = document.querySelector("#boo").lastChild
-
     stave.addClef("treble").addTimeSignature("4/4");
-
     stave.setContext(vexContext).draw();
+    let svg = document.querySelector("#boo").lastChild
+    rendererArray.push(renderer)
+    vexContextArray.push(vexContext)
+    staveArray.push(stave)
+
+    svgArray.push(svg)
     let {yRectWidth, xRectHeight, id, inc, index, xRectangles, multiplier, letters, pt} = setupBoundaryParams(svg);
     addNoteBoundaries(id, yRectWidth, staveX, index, letters, inc, xRectHeight, multiplier, staveY, svg, xRectangles, pt);
 
-    svg.insertAdjacentHTML('beforeend', '<g id="note-group"></g>')
-    svg.insertAdjacentHTML('beforeend', `<ellipse id="note-projection" cx=\"400\" cy=\"400\" rx=\"5\" ry=\"4\" opacity=\"1\"/>`)
+    svg.insertAdjacentHTML('beforeend', '<g id="note-group-1"></g>')
+    svg.insertAdjacentHTML('beforeend', `<ellipse id="note-projection-1" cx=\"400\" cy=\"400\" rx=\"5\" ry=\"4\" opacity=\"1\"/>`)
 
     svg.addEventListener("click", function (e) {
-        let projectionX = document.querySelector("#note-projection").attributes[1].value
-        let projectionY = document.querySelector("#note-projection").attributes[2].value
+        let projectionX = document.querySelector("#note-projection-1").attributes[1].value
+        let projectionY = document.querySelector("#note-projection-1").attributes[2].value
         drawNote(projectionX, projectionY, xRectangles, vexContext, stave, svg, renderer, rendererWidth, rendererHeight, staveX, staveY)
         getMousePosition(e, pt)
     })
+
     svg.addEventListener("mousemove", function (evt) {
         let svgIndex = parseInt(evt.target.attributes[0].value.split("-")[1]) - 1
-        let svg = document.querySelector("#boo").childNodes[0]
         let elementList = document.elementsFromPoint(evt.clientX, evt.clientY)
-        if ((elementList.length === 10 || elementList.length === 11) && elementList[0].attributes.length >3) {
-            console.log(elementList)
+        if ((elementList.length === 10 || elementList.length === 11) && elementList[0].attributes.length > 3) {
             let hBar = elementList[0]
             let vBar = elementList[1]
-
-            console.log(hBar)
-            console.log(vBar)
-            if (hBar[0] !== undefined && hBar[0].id === "note-projection") {
-                return
-            }
             let xposition = vBar.attributes[1].value
-            projectNote(xposition, hBar, staveX)
+            projectNote(xposition, hBar, staveX, 1)
         }
-
     })
 
 
@@ -192,6 +190,7 @@ function evalFillLength(remainder) {
 function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth, rendererHeight, staveX, staveY) {
     let subdivision = document.querySelector("#subdivision").getAttribute("value")
     let fillCount = document.querySelector("#fill-count")
+    let fillCapacity = parseInt(document.querySelector("#fill-capacity").getAttribute("value"))
     let drawnNotes = document.getElementById("drawn-notes")
     let drawnNotesValue = ""
     let fillCountValue = parseFloat(fillCount.attributes[1].value)
@@ -220,7 +219,8 @@ function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth
             temp = Number.MAX_SAFE_INTEGER
         }
     })
-    document.querySelector('#note-group').insertAdjacentHTML('beforeend', `<ellipse id=\"${fillCountValue + note}\" cx=\"0\" cy=\"0\" rx=\"5\" ry=\"4\" opacity=\"1\"/>`)
+    console.log('#note-group-' + note.split("-")[1])
+    document.querySelector('#note-group-' + note.split("-")[1]).insertAdjacentHTML('beforeend', `<ellipse id=\"${fillCountValue + note}\" cx=\"0\" cy=\"0\" rx=\"5\" ry=\"4\" opacity=\"1\"/>`)
 
     drawnNotesValue = drawnNotes.attributes[1].value + (note + ",")
     let drawnNote = document.getElementById(fillCountValue + note)
@@ -235,10 +235,10 @@ function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth
     let dec = 0;
     let i = 0;
     let duration = ""
-    let fillCapacity = 4
     let deleteCount = 0
     let remainingToFill = fillCapacity - fillCountValue
     if (fillCountValue >= fillCapacity) {
+        document.querySelector("#fill-capacity").setAttribute("value", String(fillCapacity + 4))
         let drawnNoteAndLengthList = drawnNotesValue.split(",")
         drawnNoteAndLengthList.pop()
         let drawnNoteLengthValues = []
@@ -274,26 +274,39 @@ function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth
             }
         }
 
-        fillCapacity += 4
         vexContext = renderer.getContext()
         let newStaveAttributes = newStave()
         let nStave = newStaveAttributes['stave']
         let nVexContext = newStaveAttributes['vexContext']
 
-        let innerRow = document.querySelector("#inner-row")
-        let leftCol = document.querySelector("#left-col")
-        let rightCol = document.querySelector("#right-col")
         let numberOfSvgs = fillCapacity / 4
-        document.getElementById("inner-row").style.width = String(rendererWidth * numberOfSvgs) + "px"
+        console.log(numberOfSvgs)
+        document.getElementById("inner-row").style.width = String(rendererWidth * (numberOfSvgs + 1)) + "px"
 
         voice.draw(vexContext, stave);
         nStave.setContext(nVexContext).draw();
         let newSvg = document.querySelector("#boo").lastChild
-
-
+        rendererArray.push(renderer)
+        vexContextArray.push(nVexContext)
+        staveArray.push(nStave)
+        svgArray.push(newSvg)
         newSvg.addEventListener("click", function (e) {
-            let projectionX = document.querySelector("#note-projection").attributes[1].value
-            let projectionY = document.querySelector("#note-projection").attributes[2].value
+            let svgNumber = parseInt(e.target.id.split("-")[1]) - 1
+            if (!svgNumber) {
+                return
+            }
+            console.log(svgNumber)
+            let selector = "#note-projection-" + String(svgNumber)
+            let projectionX = document.querySelector(selector).attributes[1].value
+            let projectionY = document.querySelector(selector).attributes[2].value
+            let currentRenderer = rendererArray[svgNumber]
+            let currentVexContext = vexContextArray[svgNumber]
+            let currentStave = staveArray[svgNumber]
+            let currentSvg = svgArray[svgNumber]
+            console.log(currentRenderer)
+            console.log(currentVexContext)
+            console.log(currentStave)
+            console.log(currentSvg)
             drawNote(projectionX, projectionY, xRectangles, vexContext, stave, svg, renderer, rendererWidth, rendererHeight, staveX, staveY)
             getMousePosition(e, pt)
         })
@@ -323,9 +336,34 @@ function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth
         id = numberOfSvgs
         id = String(id)
         letters = ['c/', 'b/', 'a/', 'g/', 'f/', 'e/', 'd/']
-        addNoteBoundaries(id, yRectWidth, staveX, index, letters, inc, xRectHeight, multiplier, staveY, newSvg, xRectangles, pt);
+        addNoteBoundaries(numberOfSvgs + 1, yRectWidth, staveX, index, letters, inc, xRectHeight, multiplier, staveY, newSvg, xRectangles, pt);
+        console.log("note-projection-" + String(numberOfSvgs + 1))
+        let prevNoteProjection = document.getElementById("note-projection-" + String(numberOfSvgs))
+        prevNoteProjection.attributes[5].value = 0
+        let noteGroupId = "note-group-" + String(numberOfSvgs + 1)
+        newSvg.insertAdjacentHTML('beforeend', `<g id=${noteGroupId}></g>`)
+        newSvg.insertAdjacentHTML('beforeend', `<ellipse id=${"note-projection-" + String(numberOfSvgs + 1)} cx=\"400\" cy=\"400\" rx=\"5\" ry=\"4\" opacity=\"1\"/>`)
 
-        newSvg.insertAdjacentHTML('beforeend', `<ellipse id=${id} cx=\"400\" cy=\"400\" rx=\"5\" ry=\"4\" opacity=\"1\"/>`)
+        newSvg.addEventListener("mousemove", function (evt) {
+            let svgIndex = parseInt(evt.target.attributes[0].value.split("-")[1])
+            let svg = document.querySelector("#boo").childNodes[0]
+            let elementList = document.elementsFromPoint(evt.clientX, evt.clientY)
+            if ((elementList.length === 10 || elementList.length === 11) && elementList[0].attributes.length > 3) {
+                // console.log(elementList)
+                let hBar = elementList[0]
+                let vBar = elementList[1]
+                // console.log(hBar)
+                // console.log(vBar)
+                let xposition = vBar.attributes[1].value
+                projectNote(xposition, hBar, staveX, String(numberOfSvgs + 1))
+            }
+        })
+        // newSvg.addEventListener("click", function (e) {
+        //     let projectionX = document.querySelector("#note-projection-" + id).attributes[1].value
+        //     let projectionY = document.querySelector("#note-projection-" + id).attributes[2].value
+        //     drawNote(projectionX, projectionY, xRectangles, nVexContext, nStave, newSvg, renderer, rendererWidth, rendererHeight, staveX, staveY)
+        //     getMousePosition(e, pt)
+        // })
     }
     // code for setting up single note addition
     // let tickContext = new VF.TickContext()
