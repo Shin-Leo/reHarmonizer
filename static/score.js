@@ -21,8 +21,6 @@ function projectNote(xPos, rectangle, availableWidth, id) {
     projected_note.setAttribute("cy", String(yPos))
 }
 
-document.querySelector("#boo > svg")
-
 function newStave() {
     let div = document.getElementById("boo")
     let renderer = new VF.Renderer(div, VF.Renderer.Backends.SVG);
@@ -115,6 +113,23 @@ $(document).ready(function () {
         }
     })
 
+    document.querySelector("#play-button").addEventListener("click", () => {
+        let drawnNotesString = document.querySelector("#drawn-notes").getAttribute("value")
+        console.log(drawnNotesString)
+        let drawnNotes =  drawnNotesstring.split(",")
+        for (let note of drawnNotes) {
+            let relativeLength = note.split(":")[0] + "n"
+            if (note.split(":")[0] === "W") {
+                relativeLength = "1n"
+            } else if (note.split(":")[0] === "H") {
+                relativeLength = "2n"
+            } else if (note.split(":")[0] === "Q") {
+                relativeLength = "4n"
+            }
+            let pitch = note.split(":")[1].split("-")[0]
+        }
+    })
+
 
     let noteButtons = [...document.querySelector("#note-buttons").children]
 
@@ -166,6 +181,27 @@ function evalNoteLength(noteLength) {
     return context
 }
 
+function incFillCount(subdivision, fillCount, fillCountValue) {
+    let note = ""
+    if (subdivision === "Quarter Note") {
+        note = subdivision[0]
+        fillCount.setAttribute("value", String(fillCountValue + 1))
+    } else if (subdivision === "Half Note") {
+        note = subdivision[0]
+        fillCount.setAttribute("value", String(fillCountValue + 2))
+    } else if (subdivision === "Eighth Note") {
+        note = subdivision[0]
+        fillCount.setAttribute("value", String(fillCountValue + 0.5))
+    } else if (subdivision === "Whole Note") {
+        note = subdivision[0]
+        fillCount.setAttribute("value", String(fillCountValue + 4))
+    } else if (subdivision === "Sixteenth Note") {
+        note = subdivision[0]
+        fillCount.setAttribute("value", String(fillCountValue + 0.25))
+    }
+    return note
+}
+
 function evalFillLength(remainder) {
     let context = {}
     if (remainder % 0.25 === 0) {
@@ -187,6 +223,38 @@ function evalFillLength(remainder) {
     return context
 }
 
+function parseDrawnnNotes(drawnNotesValue, fillCapacity) {
+    let drawnNoteAndLengthList = drawnNotesValue.split(",")
+    drawnNoteAndLengthList.pop()
+    let drawnNoteLengthValues = []
+    let drawnNoteKeyValues = []
+    for (let i = drawnNoteAndLengthList.length - 1; i > -1; i--) {
+        if (drawnNoteAndLengthList[i].split("-")[1] === String(((fillCapacity / 4)))) {
+            let timeValue = drawnNoteAndLengthList[i].split(":")[0]
+            let noteAndMeasureKey = drawnNoteAndLengthList[i].split(":")[1]
+            let noteKey = noteAndMeasureKey.split("-")[0]
+            drawnNoteLengthValues.push(timeValue)
+            drawnNoteKeyValues.push(noteKey)
+        } else {
+            break
+        }
+    }
+    return {drawnNoteLengthValues, drawnNoteKeyValues};
+}
+
+function eraseProjectedNotes(fillCapacity) {
+    let svgChildNodes = svgArray[((fillCapacity / 4) - 1)].childNodes
+    let staticLength = svgChildNodes.length
+    for (let i = 0; i < staticLength; i++) {
+        let element = svgChildNodes[i]
+        if (element !== null && element.nodeName === "g" && element.className !== "vf-stavenote" && element.attributes !== null && element.attributes[0].value !== "note-projection") {
+            element.childNodes.forEach((item) => {
+                item.attributes[3].value = "0"
+            })
+        }
+    }
+}
+
 function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth, rendererHeight, staveX, staveY) {
     let subdivision = document.querySelector("#subdivision").getAttribute("value")
     let fillCount = document.querySelector("#fill-count")
@@ -195,37 +263,24 @@ function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth
     let drawnNotesValue = ""
     let fillCountValue = parseFloat(fillCount.attributes[1].value)
     let note = ""
-    if (subdivision === "Quarter Note") {
-        note = subdivision[0]
-        fillCount.setAttribute("value", String(fillCountValue + 1))
-    } else if (subdivision === "Half Note") {
-        note = subdivision[0]
-        fillCount.setAttribute("value", String(fillCountValue + 2))
-    } else if (subdivision === "Eighth Note") {
-        note = subdivision[0]
-        fillCount.setAttribute("value", String(fillCountValue + 0.5))
-    } else if (subdivision === "Whole Note") {
-        note = subdivision[0]
-        fillCount.setAttribute("value", String(fillCountValue + 4))
-    } else if (subdivision === "Sixteenth Note") {
-        note = subdivision[0]
-        fillCount.setAttribute("value", String(fillCountValue + 0.25))
-    }
+
+    note = incFillCount(subdivision, fillCount, fillCountValue)
+
     fillCountValue = parseInt(fillCount.attributes[1].value)
     let temp = parseInt(pY)
-    rects.forEach((rect) => {
+    for (let rect of rects) {
         if (temp < parseInt(rect.attributes[2].value)) {
             note += ":" + String(rect.attributes[0].value)
             temp = Number.MAX_SAFE_INTEGER
         }
-    })
+    }
+
     document.querySelector('#note-group-' + note.split("-")[1]).insertAdjacentHTML('beforeend', `<ellipse id=\"${fillCountValue + note}\" cx=\"0\" cy=\"0\" rx=\"5\" ry=\"4\" opacity=\"1\"/>`)
 
     drawnNotesValue = drawnNotes.attributes[1].value + (note + ",")
     let drawnNote = document.getElementById(fillCountValue + note)
     drawnNote.setAttribute("cx", pX)
     drawnNote.setAttribute("cy", pY)
-    note = note.split("/")[note.length - 2]
 
     drawnNotes.attributes[1].value = drawnNotesValue
 
@@ -236,31 +291,13 @@ function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth
     let startIndex = ((fillCapacity / 4) - 1) * 4
     let i = startIndex;
     if (fillCountValue >= fillCapacity) {
-        let drawnNoteAndLengthList = drawnNotesValue.split(",")
-        drawnNoteAndLengthList.pop()
-        let drawnNoteLengthValues = []
-        let drawnNoteKeyValues = []
-        for (let i = startIndex; i < drawnNoteAndLengthList.length; i++) {
-            let timeValue = drawnNoteAndLengthList[i].split(":")[0]
-            let noteAndMeasureKey = drawnNoteAndLengthList[i].split(":")[1]
-            let noteKey = noteAndMeasureKey.split("-")[0]
-            drawnNoteLengthValues.push(timeValue)
-            drawnNoteKeyValues.push(noteKey)
-        }
-        let svgChildNodes = svgArray[((fillCapacity / 4) - 1)].childNodes
-        let staticLength = svgChildNodes.length
-        for (let i = 0; i < staticLength; i++) {
-            let element = svgChildNodes[i]
-            if (element !== null && element.nodeName === "g" && element.className !== "vf-stavenote" && element.attributes !== null && element.attributes[0].value !== "note-projection") {
-                element.childNodes.forEach((item) => {
-                    item.attributes[3].value = "0"
-                })
-            }
-        }
+        let {drawnNoteLengthValues, drawnNoteKeyValues} = parseDrawnnNotes(drawnNotesValue, fillCapacity);
+        eraseProjectedNotes(fillCapacity);
+
         drawnNoteKeyValues.forEach((note, i) => {
             duration = evalNoteLength(drawnNoteLengthValues[i])['duration']
             let newNote = new VF.StaveNote({clef: "treble", keys: [note], duration: duration})
-            notes.push(newNote)
+            notes.unshift(newNote)
         })
 
         document.querySelector("#fill-capacity").setAttribute("value", String(fillCapacity + 4))
@@ -295,11 +332,6 @@ function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth
             let selector = "#note-projection-" + String(svgNumber + 1)
             let projectionX = document.querySelector(selector).attributes[1].value
             let projectionY = document.querySelector(selector).attributes[2].value
-            let currentRenderer = rendererArray[svgNumber]
-            let currentVexContext = vexContextArray[svgNumber]
-            let currentStave = staveArray[svgNumber]
-            let currentSvg = svgArray[svgNumber]
-
             drawNote(projectionX, projectionY, xRectangles, vexContext, stave, svg, renderer, rendererWidth, rendererHeight, staveX, staveY)
             getMousePosition(e, pt)
         })
@@ -314,7 +346,6 @@ function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth
 
         document.querySelector("#boo").children[0].setAttribute("viewBox", viewBox)
 
-
         let {
             yRectWidth,
             xRectHeight,
@@ -327,7 +358,6 @@ function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth
             pt
         } = setupBoundaryParams(newSvg);
         id = numberOfSvgs
-        id = String(id)
         letters = ['c/', 'b/', 'a/', 'g/', 'f/', 'e/', 'd/']
         addNoteBoundaries(numberOfSvgs + 1, yRectWidth, staveX, index, letters, inc, xRectHeight, multiplier, staveY, newSvg, xRectangles, pt);
         let prevNoteProjection = document.getElementById("note-projection-" + String(numberOfSvgs))
@@ -347,41 +377,6 @@ function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth
                 projectNote(xposition, hBar, staveX, String(numberOfSvgs + 1))
             }
         })
-        // newSvg.addEventListener("click", function (e) {
-        //     let projectionX = document.querySelector("#note-projection-" + id).attributes[1].value
-        //     let projectionY = document.querySelector("#note-projection-" + id).attributes[2].value
-        //     drawNote(projectionX, projectionY, xRectangles, nVexContext, nStave, newSvg, renderer, rendererWidth, rendererHeight, staveX, staveY)
-        //     getMousePosition(e, pt)
-        // })
     }
-    // code for setting up single note addition
-    // let tickContext = new VF.TickContext()
-    // let visibleNotes = []
-    // else {
-    //         const group = vexContext.openGroup()
-    //         visibleNotes.push(group)
-    //         tickContext.addTickable(newNote)
-    //         tickContext.preFormat().setX(200)
-    //                 let newNote = new VF.StaveNote({clef: "treble", keys: [note], duration: duration}).setContext(context).setStave(stave)
-    //         newNote.draw()
-    //         vexContext.closeGroup()
-    // }
-
-    /*
-    while (remainingToFill !== 0) {
-        let context = evalFillLength(remainingToFill)
-        dec = context["dec"]
-        duration = context["duration"]
-        remainingToFill -= dec
-        let newNote = new VF.StaveNote({clef: "treble", keys: [note], duration: duration})
-        notes.push(newNote)
-        deleteCount++
-    }
-
-            while (deleteCount !== 0) {
-            notes[deleteCount].setStyle({fillStyle: "transparent", strokeStyle: "transparent"})
-            deleteCount--;
-        }
-    */
 }
 
