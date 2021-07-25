@@ -114,9 +114,17 @@ $(document).ready(function () {
     })
 
     document.querySelector("#play-button").addEventListener("click", () => {
+
+        function timeFromDurations(value, i, arr) {
+            const prevTime = arr[i - 1]?.time;
+            value.time = prevTime + arr[i - 1]?.duration || 0;
+            return value;
+        }
+
         let drawnNotesString = document.querySelector("#drawn-notes").getAttribute("value")
-        console.log(drawnNotesString)
-        let drawnNotes =  drawnNotesstring.split(",")
+        let notesAndDurations = []
+        let drawnNotes = drawnNotesString.split(",")
+        drawnNotes.pop()
         for (let note of drawnNotes) {
             let relativeLength = note.split(":")[0] + "n"
             if (note.split(":")[0] === "W") {
@@ -125,9 +133,22 @@ $(document).ready(function () {
                 relativeLength = "2n"
             } else if (note.split(":")[0] === "Q") {
                 relativeLength = "4n"
+            } else if (note.split(":")[0] === "E") {
+                relativeLength = "8n"
+            } else if (note.split(":")[0] === "S") {
+                relativeLength = "16n"
             }
             let pitch = note.split(":")[1].split("-")[0]
+            notesAndDurations.push({"note": pitch.replace("/", ""), "duration": Tone.Time(relativeLength).toSeconds()})
         }
+
+        notesAndDurations.map(timeFromDurations)
+
+        const synth = new Tone.Synth().toDestination();
+        const part = new Tone.Part((time, value) => {
+            synth.triggerAttackRelease(value.note, value.duration, time);
+        }, notesAndDurations).start(0);
+        Tone.Transport.start();
     })
 
 

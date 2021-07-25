@@ -3,6 +3,7 @@
   <component name="JavaScriptLibraryMappings">
     <file url="file://$PROJECT_DIR$" libraries="{jquery, vexflow, vexflow-debug}" />
     <file url="file://$PROJECT_DIR$/node_modules" libraries="{jquery, vexflow, vexflow-debug}" />
+    <includedPredefinedLibrary name="Node.js Core" />
     <excludedPredefinedLibrary name="HTML" />
   </component>
 </project>
