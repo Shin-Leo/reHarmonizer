@@ -11,5 +11,8 @@
   "type": "commonjs",
   "devDependencies": {
     "@types/vexflow": "^3.0.1"
+  },
+  "scripts": {
+    "start": "app.py"
   }
 }
