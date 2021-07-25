@@ -1,1 +1,1 @@
-web: gunicorn app:reHarmonizer
+web: gunicorn --bind 0.0.0.0:$PORT app:reHarmonizer
