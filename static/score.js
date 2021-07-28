@@ -14,9 +14,12 @@ function projectNote(xPos, rectangle, availableWidth, id) {
     let start = parseInt(rect[1].value) * rectId + divOffset + 3
     let barOffset = (parseInt(rectId) - 1) * (availableWidth + parseInt(rect[1].value) + 40)
     let subdivision = document.querySelector('#subdivision').attributes.getNamedItem('value').value
+    let yPos = rect[2].value - 2.5
+    if (subdivision[0] === "Q") {
+
+    }
     let selector = "note-projection-" + (id)
     let projected_note = document.getElementById(selector)
-    let yPos = rect[2].value - 2.5
     projected_note.setAttribute("cx", String(xPos))
     projected_note.setAttribute("cy", String(yPos))
 }
@@ -105,7 +108,7 @@ $(document).ready(function () {
     svg.addEventListener("mousemove", function (evt) {
         let svgIndex = parseInt(evt.target.attributes[0].value.split("-")[1]) - 1
         let elementList = document.elementsFromPoint(evt.clientX, evt.clientY)
-        if ((elementList.length === 10 || elementList.length === 11) && elementList[0].attributes.length > 3) {
+        if ((elementList.length === 10 || elementList.length === 11) && elementList[0].attributes.length > 3 && elementList[0].nodeName && elementList[0].nodeName !== "ellipse") {
             let hBar = elementList[0]
             let vBar = elementList[1]
             let xposition = vBar.attributes[1].value
@@ -156,16 +159,16 @@ $(document).ready(function () {
     })
 
 
-    // let noteButtons = [...document.querySelector("#note-buttons").children]
-    //
-    // noteButtons.forEach((button) => {
-    //     if (button.nodeName === "BUTTON") {
-    //         button.addEventListener("click", () => {
-    //             let value = button.attributes[1].value
-    //             document.querySelector("#subdivision").setAttribute("value", value)
-    //         })
-    //     }
-    // })
+    let noteButtons = [...document.querySelector("#note-buttons").children]
+
+    noteButtons.forEach((button) => {
+        if (button.nodeName === "BUTTON" && button.attributes[1].value !== "play-button") {
+            button.addEventListener("click", () => {
+                let value = button.attributes[1].value
+                document.querySelector("#subdivision").setAttribute("value", value)
+            })
+        }
+    })
 })
 
 function cursorPoint(evt, pt) {
@@ -395,7 +398,7 @@ function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth
             let svgIndex = parseInt(evt.target.attributes[0].value.split("-")[1])
             let svg = document.querySelector("#boo").childNodes[0]
             let elementList = document.elementsFromPoint(evt.clientX, evt.clientY)
-            if ((elementList.length === 10 || elementList.length === 11) && elementList[0].attributes.length > 3) {
+            if ((elementList.length === 10 || elementList.length === 11) && elementList[0].attributes.length > 3 && elementList[0].nodeName && elementList[0].nodeName !== "ellipse") {
                 let hBar = elementList[0]
                 let vBar = elementList[1]
                 let xposition = vBar.attributes[1].value
