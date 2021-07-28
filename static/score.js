@@ -116,10 +116,12 @@ $(document).ready(function () {
     document.querySelector("#play-button").addEventListener("click", () => {
 
         function timeFromDurations(value, i, arr) {
-            const prevTime = arr[i - 1]?.time;
+            let prevTime = arr[i - 1]?.time;
             value.time = prevTime + arr[i - 1]?.duration || 0;
             return value;
         }
+
+        let totalTime = 0
 
         let drawnNotesString = document.querySelector("#drawn-notes").getAttribute("value")
         let notesAndDurations = []
@@ -140,28 +142,30 @@ $(document).ready(function () {
             }
             let pitch = note.split(":")[1].split("-")[0]
             notesAndDurations.push({"note": pitch.replace("/", ""), "duration": Tone.Time(relativeLength).toSeconds()})
+            totalTime += Tone.Time(relativeLength).toSeconds()
         }
 
         notesAndDurations.map(timeFromDurations)
 
-        const synth = new Tone.Synth().toDestination();
-        const part = new Tone.Part((time, value) => {
+        let synth = new Tone.Synth().toDestination();
+        let part = new Tone.Part((time, value) => {
             synth.triggerAttackRelease(value.note, value.duration, time);
-        }, notesAndDurations).start(0);
-        Tone.Transport.start();
+        }, notesAndDurations).start(Tone.now());
+        Tone.Transport.start(Tone.now());
+
     })
 
 
-    let noteButtons = [...document.querySelector("#note-buttons").children]
-
-    noteButtons.forEach((button) => {
-        if (button.nodeName === "BUTTON") {
-            button.addEventListener("click", () => {
-                let value = button.attributes[1].value
-                document.querySelector("#subdivision").setAttribute("value", value)
-            })
-        }
-    })
+    // let noteButtons = [...document.querySelector("#note-buttons").children]
+    //
+    // noteButtons.forEach((button) => {
+    //     if (button.nodeName === "BUTTON") {
+    //         button.addEventListener("click", () => {
+    //             let value = button.attributes[1].value
+    //             document.querySelector("#subdivision").setAttribute("value", value)
+    //         })
+    //     }
+    // })
 })
 
 function cursorPoint(evt, pt) {
