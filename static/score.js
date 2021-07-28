@@ -108,9 +108,30 @@ $(document).ready(function () {
     svg.addEventListener("mousemove", function (evt) {
         let svgIndex = parseInt(evt.target.attributes[0].value.split("-")[1]) - 1
         let elementList = document.elementsFromPoint(evt.clientX, evt.clientY)
+        let subdivision = document.querySelector('#subdivision').attributes.getNamedItem('value').value
         if ((elementList.length === 10 || elementList.length === 11) && elementList[0].attributes.length > 3 && elementList[0].nodeName && elementList[0].nodeName !== "ellipse") {
             let hBar = elementList[0]
             let vBar = elementList[1]
+            let rectangleNumber = parseInt(vBar.attributes[0].value.split("-")[1].substring(1,))
+            if (subdivision[0] === "Q") {
+                if (rectangleNumber !== 16) {
+                    vBar = document.querySelector("#yRectangleHtml-" + String(id) + String(Math.floor(rectangleNumber / 4) * 4 + 2))
+                } else {
+                    vBar = document.querySelector("#yRectangleHtml-" + String(id) + "14")
+                }
+            } else if (subdivision[0] === "H") {
+                if (rectangleNumber !== 16) {
+                    vBar = document.querySelector("#yRectangleHtml-" + String(id) + String(Math.floor(rectangleNumber / 8) * 8 + 4))
+                } else {
+                    vBar = document.querySelector("#yRectangleHtml-" + String(id) + "12")
+                }
+            } else if (subdivision[0] === "E") {
+                if (rectangleNumber !== 16) {
+                    vBar = document.querySelector("#yRectangleHtml-" + String(id) + String(Math.floor(rectangleNumber / 2) * 2 + 2))
+                } else {
+                    vBar = document.querySelector("#yRectangleHtml-" + String(id) + "15")
+                }
+            }
             let xposition = vBar.attributes[1].value
             projectNote(xposition, hBar, staveX, 1)
         }
@@ -397,10 +418,31 @@ function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth
         newSvg.addEventListener("mousemove", function (evt) {
             let svgIndex = parseInt(evt.target.attributes[0].value.split("-")[1])
             let svg = document.querySelector("#boo").childNodes[0]
+            let subdivision = document.querySelector('#subdivision').attributes.getNamedItem('value').value
             let elementList = document.elementsFromPoint(evt.clientX, evt.clientY)
             if ((elementList.length === 10 || elementList.length === 11) && elementList[0].attributes.length > 3 && elementList[0].nodeName && elementList[0].nodeName !== "ellipse") {
                 let hBar = elementList[0]
                 let vBar = elementList[1]
+                let rectangleNumber = parseInt(vBar.attributes[0].value.split("-")[1].substring(1,))
+                if (subdivision[0] === "Q") {
+                    if (rectangleNumber !== 16) {
+                        vBar = document.querySelector("#yRectangleHtml-" + String(id) + String(Math.floor(rectangleNumber / 4) * 4 + 2))
+                    } else {
+                        vBar = document.querySelector("#yRectangleHtml-" + String(id) + "14")
+                    }
+                } else if (subdivision[0] === "H") {
+                    if (rectangleNumber !== 16) {
+                        vBar = document.querySelector("#yRectangleHtml-" + String(id) + String(Math.floor(rectangleNumber / 8) * 8 + 4))
+                    } else {
+                        vBar = document.querySelector("#yRectangleHtml-" + String(id) + "12")
+                    }
+                } else if (subdivision[0] === "E") {
+                    if (rectangleNumber !== 16) {
+                        vBar = document.querySelector("#yRectangleHtml-" + String(id) + String(Math.floor(rectangleNumber / 2) * 2 + 2))
+                    } else {
+                        vBar = document.querySelector("#yRectangleHtml-" + String(id) + "15")
+                    }
+                }
                 let xposition = vBar.attributes[1].value
                 projectNote(xposition, hBar, staveX, String(numberOfSvgs + 1))
             }
