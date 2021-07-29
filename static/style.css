@@ -86,7 +86,15 @@ body {
     align-content: flex-start;
 }
 
+#chord-inputs {
+        text-align: center;
+        align-items: center;
+    padding-top: 10px;
+}
 
+#button-addon2, #button-addon3 {
+        margin: 0;
+}
 div#left-col, div#right-col {
     max-width: 45%;
 }

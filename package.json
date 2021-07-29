@@ -8,9 +8,12 @@
     "typescript": "^4.3.5",
     "vexflow": "^3.0.9"
   },
-  "type": "commonjs",
+  "type": "module",
   "devDependencies": {
-    "@types/vexflow": "^3.0.1"
+    "@types/vexflow": "^3.0.1",
+    "scribbletune": "^4.1.0",
+    "webpack": "^5.47.0",
+    "webpack-cli": "^4.7.2"
   },
   "scripts": {
     "start": "app.py"

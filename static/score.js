@@ -203,12 +203,6 @@ function getMousePosition(evt, pt) {
     return cursorPt
 }
 
-function cursorPoint(evt, pt) {
-    pt.x = evt.clientX;
-    pt.y = evt.clientY;
-    return pt
-}
-
 function evalNoteLength(noteLength) {
     let context = {}
     if (noteLength === "Q") {
