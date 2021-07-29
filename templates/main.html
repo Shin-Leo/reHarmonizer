@@ -25,6 +25,7 @@
                 <input type="hidden" value="0" id="fill-count">
                 <input type="hidden" value="4" id="fill-capacity">
                 <input type="hidden" value="" id="drawn-notes">
+                <input type="hidden" value="" id="drawn-chords">
                 <input type="hidden" value="Quarter Note" id="subdivision">
                 <div class="btn-group" id="note-buttons">
                     <button class="btn btn-outline-primary" id="Whole Note"><img
@@ -76,14 +77,5 @@
         <div class="col" id="right-col"></div>
     </div>
 </div>
-    <script type="module">
-        const allChords = scribble.chords();
-        document.querySelector("#button-addon2").addEventListener("click", function () {
-            let chord = document.querySelector("#chord-inputs > input").value
-
-            console.log(scribble.chord(chord))
-
-        })
-    </script>
 </body>
 </html>

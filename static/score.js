@@ -83,6 +83,7 @@ function setupBoundaryParams(svg) {
 
 $(document).ready(function () {
     VF = Vex.Flow;
+    console.log(scribble.chord("C4 m"))
     let {renderer, rendererHeight, rendererWidth, vexContext, staveX, staveY, stave} = newStave();
     stave.addClef("treble").addTimeSignature("4/4");
     stave.setContext(vexContext).draw();
@@ -90,6 +91,13 @@ $(document).ready(function () {
     rendererArray.push(renderer)
     vexContextArray.push(vexContext)
     staveArray.push(stave)
+
+    const allChords = scribble.chords();
+    document.querySelector("#button-addon2").addEventListener("click", function () {
+        let chord = document.querySelector("#chord-inputs > input").value
+        let drawnChords = document.querySelector("#drawn-chords")
+        drawnChords.setAttribute("value", drawnChords.value + "-" + chord + "," + scribble.chord(chord).toString() + "-")
+    })
 
     svgArray.push(svg)
     let {yRectWidth, xRectHeight, id, inc, index, xRectangles, multiplier, letters, pt} = setupBoundaryParams(svg);
@@ -148,6 +156,9 @@ $(document).ready(function () {
         let totalTime = 0
 
         let drawnNotesString = document.querySelector("#drawn-notes").getAttribute("value")
+        let drawnChordsString = document.querySelector("#drawn-chords").getAttribute("value")
+        let drawnChords = drawnChordsString.split("-")
+        console.log(drawnChords)
         let notesAndDurations = []
         let drawnNotes = drawnNotesString.split(",")
         drawnNotes.pop()
@@ -171,12 +182,39 @@ $(document).ready(function () {
 
         notesAndDurations.map(timeFromDurations)
 
+        let chordArray = []
+
+
+        drawnChords.forEach((item, index) => {
+            if (index % 2 !== 0) {
+                let chord = item.split(",")
+                chord.shift()
+                chordArray.push(chord)
+            }
+        })
+
+        console.log(chordArray)
+        let inc = 0
+        let mainChords = chordArray.map((chord) => {
+            let temp =  {"time": inc, 'note': chord, 'duration': '1n'}
+            inc += 2
+            return temp
+        })
+
+        console.log(mainChords)
+
+        const polySynth = new Tone.PolySynth().toDestination();
+
+        let chordPart = new Tone.Part((time, value) => {
+            polySynth.triggerAttackRelease(value.note, value.duration, time);
+        }, mainChords).start(Tone.now());
+        console.log(notesAndDurations)
+
         let synth = new Tone.Synth().toDestination();
         let part = new Tone.Part((time, value) => {
             synth.triggerAttackRelease(value.note, value.duration, time);
         }, notesAndDurations).start(Tone.now());
         Tone.Transport.start(Tone.now());
-
     })
 
 

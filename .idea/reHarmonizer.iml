@@ -8,6 +8,7 @@
     <orderEntry type="library" name="vexflow" level="application" />
     <orderEntry type="library" name="vexflow-debug" level="application" />
     <orderEntry type="library" name="jquery" level="application" />
+    <orderEntry type="library" name="scribbletune" level="application" />
   </component>
   <component name="PyDocumentationSettings">
     <option name="format" value="PLAIN" />
