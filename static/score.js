@@ -190,16 +190,16 @@ $(document).ready(function () {
                 let chord = item.split(",")
                 console.log(chord)
                 chord.shift()
-                let newChord = []
-                for (let note of chord) {
-                    let newNote = ""
-                    newNote = note.substring(0, note.length-1)
-                    newNote += "4"
-                    console.log(newNote)
-                    newChord.push(newNote)
-                }
-                console.log(newChord)
-                chordArray.push(newChord)
+                // let newChord = []
+                // for (let note of chord) {
+                //     let newNote = ""
+                //     newNote = note.substring(0, note.length-1)
+                //     newNote += "4"
+                //     console.log(newNote)
+                //     newChord.push(newNote)
+                // }
+                // console.log(newChord)
+                chordArray.push(chord)
             }
         })
 
