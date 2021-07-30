@@ -188,11 +188,13 @@ $(document).ready(function () {
         drawnChords.forEach((item, index) => {
             if (index % 2 !== 0) {
                 let chord = item.split(",")
+                console.log(chord)
                 chord.shift()
                 let newChord = []
                 for (let note of chord) {
                     let newNote = ""
-                    newNote = note[0] + "4"
+                    newNote = note.substring(0, note.length-2)
+                    newNote += "4"
                     newChord.push(newNote)
                 }
                 console.log(newChord)
