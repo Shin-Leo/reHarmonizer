@@ -189,7 +189,14 @@ $(document).ready(function () {
             if (index % 2 !== 0) {
                 let chord = item.split(",")
                 chord.shift()
-                chordArray.push(chord)
+                let newChord = []
+                for (let note of chord) {
+                    let newNote = ""
+                    newNote = note[0] + "4"
+                    newChord.push(newNote)
+                }
+                console.log(newChord)
+                chordArray.push(newChord)
             }
         })
 
