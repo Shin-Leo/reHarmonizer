@@ -193,8 +193,9 @@ $(document).ready(function () {
                 let newChord = []
                 for (let note of chord) {
                     let newNote = ""
-                    newNote = note.substring(0, note.length-2)
+                    newNote = note.substring(0, note.length-1)
                     newNote += "4"
+                    console.log(newNote)
                     newChord.push(newNote)
                 }
                 console.log(newChord)
