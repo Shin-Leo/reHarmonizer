@@ -357,6 +357,18 @@ $(document).ready(function () {
         }, mainChords).start(Tone.now());
     })
 
+    document.getElementById("pause-button").addEventListener("click", () => {
+        if (Tone.Transport.state === "paused") {
+            Tone.Transport.start("+0.1")
+        } else {
+            Tone.Transport.pause()
+        }
+    })
+
+    document.getElementById("stop-button").addEventListener("click", () => {
+        Tone.Transport.stop()
+    })
+
     let noteButtons = [...document.querySelector("#note-buttons").children]
 
     noteButtons.forEach((button) => {

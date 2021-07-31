@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="shortcut icon" href="/favicon.ico">
     <meta charset="UTF-8">
     <title>Title</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
@@ -46,6 +47,12 @@
                             width="11" height="22"></button>
                     <button class="btn btn-outline-primary" id="play-button"><img
                             src="{{ url_for('static', filename='/play-button.svg') }}"
+                            width="20" height="20"></button>
+                    <button class="btn btn-outline-primary" id="pause-button"><img
+                            src="{{ url_for('static', filename='/pause-button.svg') }}"
+                            width="20" height="20"></button>
+                    <button class="btn btn-outline-primary" id="stop-button"><img
+                            src="{{ url_for('static', filename='/stop-button.svg') }}"
                             width="20" height="20"></button>
                 </div>
                 <div class="input-group mb-3" id="chord-inputs">
