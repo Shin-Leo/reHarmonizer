@@ -284,31 +284,23 @@ $(document).ready(function () {
         notesAndDurations.map(timeFromDurations)
 
         let chordArray = []
-
+        let durationArray = []
 
         drawnChords.forEach((item, index) => {
             let chord = item.split(",")
+            let duration = chord.pop()
             chord.shift()
-            // let newChord = []
-            // for (let note of chord) {
-            //     let newNote = ""
-            //     newNote = note.substring(0, note.length-1)
-            //     newNote += "4"
-            //     console.log(newNote)
-            //     newChord.push(newNote)
-            // }
-            console.log(chord)
+            durationArray.push(duration)
             chordArray.push(chord)
         })
 
-        console.log(chordArray)
         let inc = 0
-        let mainChords = chordArray.map((chord) => {
-            let temp = {"time": inc, 'note': chord, 'duration': '1n'}
-            inc += 2
-            return temp
+        let mainChords = []
+        chordArray.forEach((item, index) => {
+            let temp = {"time": inc, 'note': item, 'duration': parseInt(durationArray[index]) / 2}
+            inc += parseInt(durationArray[index]) / 2
+            mainChords.push(temp)
         })
-
         console.log(mainChords)
 
         const polySynth = new Tone.PolySynth().toDestination();
@@ -336,7 +328,8 @@ $(document).ready(function () {
     document.querySelector("#add-chord").addEventListener("click", function () {
         let chord = processChordInput()
         let drawnChords = document.querySelector("#drawn-chords")
-        drawnChords.setAttribute("value", drawnChords.value + chord + "," + scribble.chord(chord).toString() + "-")
+        let chordDuration = document.getElementById("chord-duration").value
+        drawnChords.setAttribute("value", drawnChords.value + chord + "," + scribble.chord(chord).toString() + "," + chordDuration + "-")
     })
 
     document.querySelector("#remove-chord").addEventListener("click", function () {
@@ -354,12 +347,15 @@ $(document).ready(function () {
         }
     })
     document.querySelector("#preview-chord").addEventListener("click", function () {
-        let input = processChordInput()
-        let chord = document.querySelector("#chord-inputs > input").value
-        let drawnChords = document.querySelector("#drawn-chords")
-        drawnChords.setAttribute("value", drawnChords.value + "-" + chord + "," + scribble.chord(chord).toString() + "-")
+        let chord = processChordInput()
+        let chordDuration = document.getElementById("chord-duration").value
+        let chordNoteArray = scribble.chord(chord)
+        let mainChords = [{"time": 0, 'note': chordNoteArray, 'duration': parseInt(chordDuration) / 2}]
+        const polySynth = new Tone.PolySynth().toDestination();
+        let chordPart = new Tone.Part((time, value) => {
+            polySynth.triggerAttackRelease(value.note, value.duration, time);
+        }, mainChords).start(Tone.now());
     })
-
 
     let noteButtons = [...document.querySelector("#note-buttons").children]
 

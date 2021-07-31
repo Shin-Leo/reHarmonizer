@@ -31,7 +31,7 @@
                 <div class="btn-group" id="note-buttons">
                     <button class="btn btn-outline-primary" id="Whole Note"><img
                             src="{{ url_for('static', filename='/note-pics/whole-note.svg') }}"
-                            width="10" height="7" alt="" ></button>
+                            width="10" height="7" alt=""></button>
                     <button class="btn btn-outline-primary" id="Half Note"><img
                             src="{{ url_for('static', filename='/note-pics/half-note.svg') }}"
                             width="20" height="20"></button>
@@ -49,13 +49,16 @@
                             width="20" height="20"></button>
                 </div>
                 <div class="input-group mb-3" id="chord-inputs">
-                    <span class="input-group-text" id="basic-addon1">Chord Name</span>
+                    <span class="input-group-text" id="basic-addon1">Chords</span>
                     <input type="text" value="" class="form-control" placeholder="C:4"
                            aria-label="Cm7" aria-describedby="root-pitch" id="root-pitch">
                     <div class="autocomplete">
                         <input type="text" value="" class="form-control" placeholder="7th"
-                               aria-label="Cm7" aria-describedby="chord-autocomplete" id="chord-autocomplete" autocomplete="off">
+                               aria-label="Cm7" aria-describedby="chord-autocomplete" id="chord-autocomplete"
+                               autocomplete="off">
                     </div>
+                    <input type="text" value="" class="form-control" placeholder="4"
+                           aria-label="4" aria-describedby="chord-duration" id="chord-duration">
                     <button class="btn btn-outline-secondary" type="button" id="preview-chord">&#62;</button>
                     <button class="btn btn-outline-secondary" type="button" id="add-chord">+</button>
                     <button class="btn btn-outline-secondary" type="button" id="remove-chord">-</button>
