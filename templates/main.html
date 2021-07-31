@@ -10,7 +10,8 @@
     <script src="{{ url_for('static', filename='/vexflow-min.js') }}"></script>
     <script src="https://unpkg.com/tone@latest/build/Tone.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/scribbletune/4.1.0/scribbletune.js"></script>
-    <script src="{{ url_for('static', filename='/score.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tonaljs/tonal/browser/tonal.min.js"></script>
+    <script src="{{ url_for('static', filename='/bundle.js') }}"></script>
 </head>
 <body>
 <div class="container-fluid">
@@ -20,7 +21,7 @@
             <div class="row" id="inner-row" style="width: 460px">
                 <div id="boo"></div>
             </div>
-            <div class="elements">
+            <div class="elements" id="elements">
                 <input type="hidden" value="1" id="bar-count">
                 <input type="hidden" value="0" id="fill-count">
                 <input type="hidden" value="4" id="fill-capacity">
@@ -30,7 +31,7 @@
                 <div class="btn-group" id="note-buttons">
                     <button class="btn btn-outline-primary" id="Whole Note"><img
                             src="{{ url_for('static', filename='/note-pics/whole-note.svg') }}"
-                            width="10" height="7" alt=""></button>
+                            width="10" height="7" alt="" ></button>
                     <button class="btn btn-outline-primary" id="Half Note"><img
                             src="{{ url_for('static', filename='/note-pics/half-note.svg') }}"
                             width="20" height="20"></button>
@@ -49,10 +50,15 @@
                 </div>
                 <div class="input-group mb-3" id="chord-inputs">
                     <span class="input-group-text" id="basic-addon1">Chord Name</span>
-                    <input type="text" value="" class="form-control" placeholder="Cm7"
-                           aria-label="Cm7" aria-describedby="button-addon2">
-                    <button class="btn btn-outline-secondary" type="button" id="button-addon2">+</button>
-                    <button class="btn btn-outline-secondary" type="button" id="button-addon3">-</button>
+                    <input type="text" value="" class="form-control" placeholder="C:4"
+                           aria-label="Cm7" aria-describedby="root-pitch" id="root-pitch">
+                    <div class="autocomplete">
+                        <input type="text" value="" class="form-control" placeholder="7th"
+                               aria-label="Cm7" aria-describedby="chord-autocomplete" id="chord-autocomplete" autocomplete="off">
+                    </div>
+                    <button class="btn btn-outline-secondary" type="button" id="preview-chord">&#62;</button>
+                    <button class="btn btn-outline-secondary" type="button" id="add-chord">+</button>
+                    <button class="btn btn-outline-secondary" type="button" id="remove-chord">-</button>
                 </div>
 
                 <!--                <div class="btn-group" id="rest-buttons">-->
