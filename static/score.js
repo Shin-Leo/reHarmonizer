@@ -259,6 +259,7 @@ $(document).ready(function () {
         let drawnChordsString = document.querySelector("#drawn-chords").getAttribute("value")
         let drawnChords = drawnChordsString.split("-")
         console.log(drawnChords)
+        drawnChords.pop()
         let notesAndDurations = []
         let drawnNotes = drawnNotesString.split(",")
         drawnNotes.pop()
@@ -286,20 +287,18 @@ $(document).ready(function () {
 
 
         drawnChords.forEach((item, index) => {
-            if (index % 2 !== 0) {
-                let chord = item.split(",")
-                chord.shift()
-                // let newChord = []
-                // for (let note of chord) {
-                //     let newNote = ""
-                //     newNote = note.substring(0, note.length-1)
-                //     newNote += "4"
-                //     console.log(newNote)
-                //     newChord.push(newNote)
-                // }
-                // console.log(newChord)
-                chordArray.push(chord)
-            }
+            let chord = item.split(",")
+            chord.shift()
+            // let newChord = []
+            // for (let note of chord) {
+            //     let newNote = ""
+            //     newNote = note.substring(0, note.length-1)
+            //     newNote += "4"
+            //     console.log(newNote)
+            //     newChord.push(newNote)
+            // }
+            console.log(chord)
+            chordArray.push(chord)
         })
 
         console.log(chordArray)
@@ -337,16 +336,24 @@ $(document).ready(function () {
     document.querySelector("#add-chord").addEventListener("click", function () {
         let chord = processChordInput()
         let drawnChords = document.querySelector("#drawn-chords")
-        drawnChords.setAttribute("value", drawnChords.value + "-" + chord + "," + scribble.chord(chord).toString() + "-")
+        drawnChords.setAttribute("value", drawnChords.value + chord + "," + scribble.chord(chord).toString() + "-")
     })
 
     document.querySelector("#remove-chord").addEventListener("click", function () {
-        let chord = document.querySelector("#chord-inputs > input").value
-        let drawnChords = document.querySelector("#drawn-chords")
-        drawnChords.setAttribute("value", drawnChords.value + "-" + chord + "," + scribble.chord(chord).toString() + "-")
+        let drawnChords = document.getElementById("drawn-chords").value
+        if (drawnChords.length > 0) {
+            let drawnChordArray = drawnChords.split("-")
+            drawnChordArray.pop()
+            drawnChordArray.pop()
+            if (drawnChordArray.length > 0) {
+                let retVal = drawnChordArray.join("-") + "-"
+                document.getElementById("drawn-chords").setAttribute("value", retVal)
+            } else {
+                document.getElementById("drawn-chords").setAttribute("value", "")
+            }
+        }
     })
     document.querySelector("#preview-chord").addEventListener("click", function () {
-
         let input = processChordInput()
         let chord = document.querySelector("#chord-inputs > input").value
         let drawnChords = document.querySelector("#drawn-chords")
