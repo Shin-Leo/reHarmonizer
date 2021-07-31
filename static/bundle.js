@@ -4064,6 +4064,29 @@ $(document).ready(function () {
         Tone.Transport.stop()
     })
 
+    document.getElementById("undo-button").addEventListener("click", () => {
+        let drawnNotes = document.getElementById("drawn-notes")
+        let fillCount = document.getElementById("fill-count")
+        let fillCapacity = document.getElementById("fill-capacity")
+        let newDrawnNoteArray = drawnNotes.getAttribute("value").split(",")
+        if (newDrawnNoteArray[newDrawnNoteArray.length - 1] === "") {
+            newDrawnNoteArray.pop()
+        }
+        let deletedNote = newDrawnNoteArray.pop()
+        let subdivision = deletedNote.split(":")[0]
+        let noteLength = evalNoteLength(subdivision[0])["dec"]
+        let fillCountValue = parseInt(fillCount.getAttribute("value"))
+        console.log(fillCountValue)
+        let fillCapacityValue = parseInt(fillCapacity.getAttribute("value"))
+        fillCount.setAttribute("value", String(fillCountValue - noteLength));
+        console.log(String(fillCountValue - noteLength))
+        let newDrawnNotes = newDrawnNoteArray.join()
+        drawnNotes.setAttribute("value", newDrawnNotes)
+        let id = "note-group-" + String(svgArray.length)
+        let noteGroup = document.getElementById(id)
+        noteGroup.lastChild.remove()
+    })
+
     let volume = document.querySelector("#volume-control");
     volume.addEventListener("change", function (e) {
         Tone.volume = e.currentTarget.value / 100;
@@ -4072,7 +4095,10 @@ $(document).ready(function () {
     let noteButtons = [...document.querySelector("#note-buttons").children]
 
     noteButtons.forEach((button) => {
-        if (button.nodeName === "BUTTON" && button.attributes[1].value !== "play-button") {
+        if (button.nodeName === "BUTTON" && button.attributes[1].value !== "play-button" &&
+        button.attributes[1].value !== "stop-button"&&
+        button.attributes[1].value !== "pause-button"&&
+        button.attributes[1].value !== "undo-button") {
             button.addEventListener("click", () => {
                 let value = button.attributes[1].value
                 document.querySelector("#subdivision").setAttribute("value", value)
@@ -4199,6 +4225,7 @@ function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth
     note = incFillCount(subdivision, fillCount, fillCountValue)
 
     fillCountValue = parseInt(fillCount.attributes[1].value)
+    console.log(fillCountValue)
     let temp = parseInt(pY)
     for (let rect of rects) {
         if (temp < parseInt(rect.attributes[2].value)) {
@@ -4214,10 +4241,10 @@ function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth
 
     let synth = new Tone.Synth().toDestination();
     let noteDuration = getSubdivisionLength(subdivision[0])
+    console.log(noteDuration)
     synth.triggerAttackRelease(note.split("-")[0].split(":")[1].replace("/", ""), noteDuration, Tone.now())
 
     Tone.Transport.start(Tone.now());
-
 
     let drawnNote = document.getElementById(fillCountValue + note)
     drawnNote.setAttribute("cx", pX)
