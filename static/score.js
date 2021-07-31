@@ -22,6 +22,7 @@ function projectNote(xPos, rectangle, availableWidth, id) {
     let projected_note = document.getElementById(selector)
     projected_note.setAttribute("cx", String(xPos))
     projected_note.setAttribute("cy", String(yPos))
+    console.log(rectangle.attributes)
 }
 
 function newStave() {
@@ -367,6 +368,11 @@ $(document).ready(function () {
 
     document.getElementById("stop-button").addEventListener("click", () => {
         Tone.Transport.stop()
+    })
+
+    let volume = document.querySelector("#volume-control");
+    volume.addEventListener("change", function (e) {
+        Tone.volume = e.currentTarget.value / 100;
     })
 
     let noteButtons = [...document.querySelector("#note-buttons").children]
