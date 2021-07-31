@@ -22,7 +22,6 @@ function projectNote(xPos, rectangle, availableWidth, id) {
     let projected_note = document.getElementById(selector)
     projected_note.setAttribute("cx", String(xPos))
     projected_note.setAttribute("cy", String(yPos))
-    console.log(rectangle.attributes)
 }
 
 function newStave() {
@@ -187,6 +186,22 @@ function autocomplete(inp, arr) {
     });
 }
 
+function getSubdivisionLength(note) {
+    let relativeLength
+    if (note === "W") {
+        relativeLength = "1n"
+    } else if (note === "H") {
+        relativeLength = "2n"
+    } else if (note === "Q") {
+        relativeLength = "4n"
+    } else if (note === "E") {
+        relativeLength = "8n"
+    } else if (note === "S") {
+        relativeLength = "16n"
+    }
+    return relativeLength;
+}
+
 $(document).ready(function () {
     VF = Vex.Flow;
     let allChords = scribble.chords()
@@ -266,17 +281,7 @@ $(document).ready(function () {
         drawnNotes.pop()
         for (let note of drawnNotes) {
             let relativeLength = note.split(":")[0] + "n"
-            if (note.split(":")[0] === "W") {
-                relativeLength = "1n"
-            } else if (note.split(":")[0] === "H") {
-                relativeLength = "2n"
-            } else if (note.split(":")[0] === "Q") {
-                relativeLength = "4n"
-            } else if (note.split(":")[0] === "E") {
-                relativeLength = "8n"
-            } else if (note.split(":")[0] === "S") {
-                relativeLength = "16n"
-            }
+            relativeLength = getSubdivisionLength(note.split(":")[0]);
             let pitch = note.split(":")[1].split("-")[0]
             notesAndDurations.push({"note": pitch.replace("/", ""), "duration": Tone.Time(relativeLength).toSeconds()})
             totalTime += Tone.Time(relativeLength).toSeconds()
@@ -516,6 +521,15 @@ function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth
     document.querySelector('#note-group-' + note.split("-")[1]).insertAdjacentHTML('beforeend', `<ellipse id=\"${fillCountValue + note}\" cx=\"0\" cy=\"0\" rx=\"5\" ry=\"4\" opacity=\"1\"/>`)
 
     drawnNotesValue = drawnNotes.attributes[1].value + (note + ",")
+
+
+    let synth = new Tone.Synth().toDestination();
+    let noteDuration = getSubdivisionLength(subdivision[0])
+    synth.triggerAttackRelease(note.split("-")[0].split(":")[1].replace("/", ""), noteDuration, Tone.now())
+
+    Tone.Transport.start(Tone.now());
+
+
     let drawnNote = document.getElementById(fillCountValue + note)
     drawnNote.setAttribute("cx", pX)
     drawnNote.setAttribute("cy", pY)
