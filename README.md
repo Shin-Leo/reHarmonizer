@@ -3,12 +3,9 @@
 This Flask project is for reharmonizing a small section of a song when given the chord progression and the main melody.
 
 ## Try it Here! ##
-- - - -
-
 https://sleepy-ocean-50160.herokuapp.com/
 
 ## How It Works ##
-- - - -
 
 * ### Notation ###
     * #### Melody ####
@@ -26,7 +23,6 @@ https://sleepy-ocean-50160.herokuapp.com/
     * Planning on using [Tonal.js](https://github.com/tonaljs/tonal) to manipulate the inputted chord progression
 
 ## Current Progress ##
-- - - -
 
 * ### Notation ###
     - [ ] Undo Button For Notes
