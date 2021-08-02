@@ -3,7 +3,7 @@
 This Flask project is for reharmonizing a small section of a song when given the chord progression and the main melody.
 
 ## Try it Here! ##
-https://sleepy-ocean-50160.herokuapp.com/
+https://re-harmonizer.herokuapp.com/
 
 ## How It Works ##
 
