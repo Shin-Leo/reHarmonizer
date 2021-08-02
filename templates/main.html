@@ -54,26 +54,34 @@
                     <button class="btn btn-outline-primary" id="stop-button"><img
                             src="{{ url_for('static', filename='/stop-button.svg') }}"
                             width="20" height="20"></button>
-                    <button class="btn btn-outline-primary" id="undo-button"><img
-                            src="{{ url_for('static', filename='/undo-button.svg') }}"
-                            width="20" height="20"></button>
+<!--                    <button class="btn btn-outline-primary" id="undo-button"><img-->
+<!--                            src="{{ url_for('static', filename='/undo-button.svg') }}"-->
+<!--                            width="20" height="20"></button>-->
                 </div>
-                <input type="range" id="volume-control">
+<!--                <div class="input-group mb-3" id="bpm-group">-->
+<!--                    <span class="input-group-text" id="bpm-span">BPM</span>-->
+<!--                    <input type="text" value="120" class="form-control" placeholder="120"-->
+<!--                           id="bpm">-->
+<!--                    <button class="btn btn-outline-secondary" type="button" id="bpm-raise">+</button>-->
+<!--                    <button class="btn btn-outline-secondary" type="button" id="bpm-lower">-</button>-->
+<!--                </div>-->
                 <div class="input-group mb-3" id="chord-inputs">
                     <span class="input-group-text" id="basic-addon1">Chords</span>
-                    <input type="text" value="" class="form-control" placeholder="C:4"
+                    <input type="text" value="C:4" class="form-control" placeholder="C:4"
                            aria-label="Cm7" aria-describedby="root-pitch" id="root-pitch">
                     <div class="autocomplete">
-                        <input type="text" value="" class="form-control" placeholder="7th"
+                        <input type="text" value="7th" class="form-control" placeholder="7th"
                                aria-label="Cm7" aria-describedby="chord-autocomplete" id="chord-autocomplete"
                                autocomplete="off">
                     </div>
-                    <input type="text" value="" class="form-control" placeholder="4"
+                    <input type="text" value="4" class="form-control" placeholder="4"
                            aria-label="4" aria-describedby="chord-duration" id="chord-duration">
                     <button class="btn btn-outline-secondary" type="button" id="preview-chord">&#62;</button>
                     <button class="btn btn-outline-secondary" type="button" id="add-chord">+</button>
                     <button class="btn btn-outline-secondary" type="button" id="remove-chord">-</button>
                 </div>
+<!--                <div class="input-group mb-3"><input type="range" id="volume-control">-->
+<!--                </div>-->
 
                 <!--                <div class="btn-group" id="rest-buttons">-->
                 <!--                    <button class="btn btn-outline-primary" id="whole-rest"><img-->

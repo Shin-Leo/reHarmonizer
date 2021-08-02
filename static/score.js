@@ -271,10 +271,9 @@ $(document).ready(function () {
 
         let totalTime = 0
 
-        let drawnNotesString = document.querySelector("#drawn-notes").getAttribute("value")
-        let drawnChordsString = document.querySelector("#drawn-chords").getAttribute("value")
+        let drawnNotesString = document.querySelector("#drawn-notes").value
+        let drawnChordsString = document.querySelector("#drawn-chords").value
         let drawnChords = drawnChordsString.split("-")
-        console.log(drawnChords)
         drawnChords.pop()
         let notesAndDurations = []
         let drawnNotes = drawnNotesString.split(",")
@@ -307,19 +306,16 @@ $(document).ready(function () {
             inc += parseInt(durationArray[index]) / 2
             mainChords.push(temp)
         })
-        console.log(mainChords)
 
-        const polySynth = new Tone.PolySynth().toDestination();
-
-        let chordPart = new Tone.Part((time, value) => {
-            polySynth.triggerAttackRelease(value.note, value.duration, time);
-        }, mainChords).start(Tone.now());
-        console.log(notesAndDurations)
-
+        // let bpm = document.getElementById("bpm").value
         let synth = new Tone.Synth().toDestination();
         let part = new Tone.Part((time, value) => {
             synth.triggerAttackRelease(value.note, value.duration, time);
         }, notesAndDurations).start(Tone.now());
+        const polySynth = new Tone.PolySynth(Tone.Synth).toDestination();
+        let chordPart = new Tone.Part((time, value) => {
+            polySynth.triggerAttackRelease(value.note, value.duration, time);
+        }, mainChords).start(Tone.now());
         Tone.Transport.start(Tone.now());
     })
 
@@ -357,10 +353,13 @@ $(document).ready(function () {
         let chordDuration = document.getElementById("chord-duration").value
         let chordNoteArray = scribble.chord(chord)
         let mainChords = [{"time": 0, 'note': chordNoteArray, 'duration': parseInt(chordDuration) / 2}]
+        // let bpm = document.getElementById("bpm").value
+        // console.log(bpm)
         const polySynth = new Tone.PolySynth().toDestination();
         let chordPart = new Tone.Part((time, value) => {
             polySynth.triggerAttackRelease(value.note, value.duration, time);
         }, mainChords).start(Tone.now());
+        Tone.Transport.start(Tone.now())
     })
 
     document.getElementById("pause-button").addEventListener("click", () => {
@@ -375,41 +374,63 @@ $(document).ready(function () {
         Tone.Transport.stop()
     })
 
-    document.getElementById("undo-button").addEventListener("click", () => {
-        let drawnNotes = document.getElementById("drawn-notes")
-        let fillCount = document.getElementById("fill-count")
-        let fillCapacity = document.getElementById("fill-capacity")
-        let newDrawnNoteArray = drawnNotes.getAttribute("value").split(",")
-        if (newDrawnNoteArray[newDrawnNoteArray.length - 1] === "") {
-            newDrawnNoteArray.pop()
-        }
-        let deletedNote = newDrawnNoteArray.pop()
-        let subdivision = deletedNote.split(":")[0]
-        let noteLength = evalNoteLength(subdivision[0])["dec"]
-        let fillCountValue = parseInt(fillCount.getAttribute("value"))
-        console.log(fillCountValue)
-        let fillCapacityValue = parseInt(fillCapacity.getAttribute("value"))
-        fillCount.setAttribute("value", String(fillCountValue - noteLength));
-        console.log(String(fillCountValue - noteLength))
-        let newDrawnNotes = newDrawnNoteArray.join()
-        drawnNotes.setAttribute("value", newDrawnNotes)
-        let id = "note-group-" + String(svgArray.length)
-        let noteGroup = document.getElementById(id)
-        noteGroup.lastChild.remove()
-    })
+    // let bpm = document.getElementById("bpm")
+    //
+    //
+    // let bpmRaise = document.getElementById("bpm-raise")
+    // bpmRaise.addEventListener("click", () => {
+    //     bpm = document.getElementById("bpm")
+    //     bpm.setAttribute("value", String(parseInt(bpm.value) + 5))
+    // })
+    //
+    // let bpmLower = document.getElementById("bpm-lower")
+    // bpmLower.addEventListener("click", () => {
+    //     bpm = document.getElementById("bpm")
+    //     bpm.setAttribute("value", String(parseInt(bpm.value) - 5))
+    // })
+    //
+    // let volumeControl = document.getElementById("volume-control")
+    // volumeControl.addEventListener("change", () => {
+    //     console.log(Tone.Transport.context)
+    //     let value = volumeControl.value
+    //     const vol = new Tone.Volume().toDestination();
+    // })
 
-    let volume = document.querySelector("#volume-control");
-    volume.addEventListener("change", function (e) {
-        Tone.volume = e.currentTarget.value / 100;
-    })
+    // document.getElementById("undo-button").addEventListener("click", () => {
+    //     let drawnNotes = document.getElementById("drawn-notes")
+    //     let fillCount = document.getElementById("fill-count")
+    //     let fillCapacity = document.getElementById("fill-capacity")
+    //     let newDrawnNoteArray = drawnNotes.value.split(",")
+    //     if (newDrawnNoteArray[newDrawnNoteArray.length - 1] === "") {
+    //         newDrawnNoteArray.pop()
+    //     }
+    //     let deletedNote = newDrawnNoteArray.pop()
+    //     let subdivision = deletedNote.split(":")[0]
+    //     let noteLength = evalNoteLength(subdivision[0])["dec"]
+    //     let fillCountValue = parseInt(fillCount.getAttribute("value"))
+    //     console.log(fillCountValue)
+    //     let fillCapacityValue = parseInt(fillCapacity.getAttribute("value"))
+    //     fillCount.setAttribute("value", String(fillCountValue - noteLength));
+    //     console.log(String(fillCountValue - noteLength))
+    //     let newDrawnNotes = newDrawnNoteArray.join()
+    //     drawnNotes.setAttribute("value", newDrawnNotes)
+    //     let id = "note-group-" + String(svgArray.length)
+    //     let noteGroup = document.getElementById(id)
+    //     noteGroup.lastChild.remove()
+    // })
+
+    // let volume = document.querySelector("#volume-control");
+    // volume.addEventListener("change", function (e) {
+    //     Tone.volume = e.currentTarget.value / 100;
+    // })
 
     let noteButtons = [...document.querySelector("#note-buttons").children]
 
     noteButtons.forEach((button) => {
         if (button.nodeName === "BUTTON" && button.attributes[1].value !== "play-button" &&
-        button.attributes[1].value !== "stop-button"&&
-        button.attributes[1].value !== "pause-button"&&
-        button.attributes[1].value !== "undo-button") {
+            button.attributes[1].value !== "stop-button" &&
+            button.attributes[1].value !== "pause-button" &&
+            button.attributes[1].value !== "undo-button") {
             button.addEventListener("click", () => {
                 let value = button.attributes[1].value
                 document.querySelector("#subdivision").setAttribute("value", value)
@@ -525,7 +546,7 @@ function eraseProjectedNotes(fillCapacity) {
 }
 
 function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth, rendererHeight, staveX, staveY) {
-    let subdivision = document.querySelector("#subdivision").getAttribute("value")
+    let subdivision = document.querySelector("#subdivision").value
     let fillCount = document.querySelector("#fill-count")
     let fillCapacity = parseInt(document.querySelector("#fill-capacity").getAttribute("value"))
     let drawnNotes = document.getElementById("drawn-notes")
@@ -536,7 +557,6 @@ function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth
     note = incFillCount(subdivision, fillCount, fillCountValue)
 
     fillCountValue = parseInt(fillCount.attributes[1].value)
-    console.log(fillCountValue)
     let temp = parseInt(pY)
     for (let rect of rects) {
         if (temp < parseInt(rect.attributes[2].value)) {
@@ -552,7 +572,6 @@ function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth
 
     let synth = new Tone.Synth().toDestination();
     let noteDuration = getSubdivisionLength(subdivision[0])
-    console.log(noteDuration)
     synth.triggerAttackRelease(note.split("-")[0].split(":")[1].replace("/", ""), noteDuration, Tone.now())
 
     Tone.Transport.start(Tone.now());
@@ -651,9 +670,10 @@ function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth
             let svg = document.querySelector("#boo").childNodes[0]
             let subdivision = document.querySelector('#subdivision').attributes.getNamedItem('value').value
             let elementList = document.elementsFromPoint(evt.clientX, evt.clientY)
-            if ((elementList.length === 10 || elementList.length === 11) && elementList[0].attributes.length > 3 && elementList[0].nodeName && elementList[0].nodeName !== "ellipse") {
+            if ((elementList.length === 10 || elementList.length === 11) && elementList[0].attributes.length > 3 && elementList[0].nodeName && elementList[0].nodeName !== "ellipse" && elementList[1].attributes[0].value.split("-")[1]) {
                 let hBar = elementList[0]
                 let vBar = elementList[1]
+
                 let rectangleNumber = parseInt(vBar.attributes[0].value.split("-")[1].substring(1,))
                 if (subdivision[0] === "Q") {
                     if (rectangleNumber !== 16) {
