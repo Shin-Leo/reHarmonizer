@@ -4162,23 +4162,24 @@ function evalNoteLength(noteLength) {
 
 function incFillCount(subdivision, fillCount, fillCountValue) {
     let note = ""
+    let increment = ""
     if (subdivision === "Quarter Note") {
         note = subdivision[0]
-        fillCount.setAttribute("value", String(fillCountValue + 1))
+        increment = String(fillCountValue + 1)
     } else if (subdivision === "Half Note") {
         note = subdivision[0]
-        fillCount.setAttribute("value", String(fillCountValue + 2))
+        increment = String(fillCountValue + 2)
     } else if (subdivision === "Eighth Note") {
         note = subdivision[0]
-        fillCount.setAttribute("value", String(fillCountValue + 0.5))
+        increment = String(fillCountValue + 0.5)
     } else if (subdivision === "Whole Note") {
         note = subdivision[0]
-        fillCount.setAttribute("value", String(fillCountValue + 4))
+        increment = String(fillCountValue + 4)
     } else if (subdivision === "Sixteenth Note") {
         note = subdivision[0]
-        fillCount.setAttribute("value", String(fillCountValue + 0.25))
+        increment =  String(fillCountValue + 0.25)
     }
-    return note
+    return {"note": [note], "fillCount": [increment]}
 }
 
 function evalFillLength(remainder) {
@@ -4236,16 +4237,22 @@ function eraseProjectedNotes(fillCapacity) {
 
 function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth, rendererHeight, staveX, staveY) {
     let subdivision = document.querySelector("#subdivision").value
-    let fillCount = document.querySelector("#fill-count")
+    let fillCount = document.getElementById("fill-count")
     let fillCapacity = parseInt(document.querySelector("#fill-capacity").getAttribute("value"))
     let drawnNotes = document.getElementById("drawn-notes")
     let drawnNotesValue = ""
-    let fillCountValue = parseFloat(fillCount.attributes[1].value)
-    let note = ""
+    let fillCountValue = parseFloat(fillCount.value)
 
-    note = incFillCount(subdivision, fillCount, fillCountValue)
+    let noteInc = incFillCount(subdivision, fillCount, fillCountValue)
+    let note = noteInc["note"]
 
-    fillCountValue = parseInt(fillCount.attributes[1].value)
+    if (noteInc["fillCount"] > fillCapacity) {
+        alert("Cross-measure melodies not supported yet: fill the measure with the exact note value")
+        return
+    }
+
+    fillCount.setAttribute("value", noteInc["fillCount"])
+
     let temp = parseInt(pY)
     for (let rect of rects) {
         if (temp < parseInt(rect.attributes[2].value)) {
@@ -4277,7 +4284,7 @@ function drawNote(pX, pY, rects, vexContext, stave, svg, renderer, rendererWidth
     let duration = ""
     let startIndex = ((fillCapacity / 4) - 1) * 4
     let i = startIndex;
-    if (fillCountValue >= fillCapacity) {
+    if (parseFloat(document.getElementById("fill-count").value) === parseFloat(fillCapacity)) {
         let {drawnNoteLengthValues, drawnNoteKeyValues} = parseDrawnnNotes(drawnNotesValue, fillCapacity);
         eraseProjectedNotes(fillCapacity);
 

@@ -87,6 +87,7 @@ body {
     display: inline-flex;
     flex-wrap: wrap;
     align-content: flex-start;
+    overflow: auto;
 }
 
 #chord-inputs, #bpm-group {
