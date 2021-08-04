@@ -7,7 +7,9 @@ https://re-harmonizer.herokuapp.com/
 
 ## How It Works ##
 
+
 * ### Notation ###
+  ![](https://github.com/Shin-Leo/reHarmonizer/blob/master/screenshot.png?raw=true)
     * #### Melody ####
       To get the melody from the user, [VexFlow.js](https://github.com/0xfe/vexflow) is used to dynamically render empty stave svgs. These svgs are
       overlayed with a matrix of horizontal rectanglular svgs to define the pitch regions and vertical rectangles to
