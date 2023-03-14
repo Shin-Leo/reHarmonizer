@@ -14,7 +14,7 @@
     "@tonaljs/tonal": "^4.6.2",
     "@types/vexflow": "^3.0.1",
     "scribbletune": "^4.1.0",
-    "webpack": "^5.47.0",
+    "webpack": "^5.76.0",
     "webpack-cli": "^4.7.2"
   },
   "scripts": {
